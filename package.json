@@ -1,0 +1,17 @@
+{
+  "main": "index.html",
+  "name": "Golf",
+  "description": "A golf simulator with air resistance",
+  "version": "0.1",
+  "keywords": [ "demo", "node-webkit" ],
+  "window": {
+    "title": "Golf",
+    "toolbar": true,
+    "frame": true,
+    "width": 1200,
+    "height": 960
+  },
+  "webkit": {
+    "plugin": true
+  }
+}

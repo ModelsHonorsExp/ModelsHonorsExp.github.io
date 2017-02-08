@@ -1,0 +1,19 @@
+* {
+   margin: 0;
+   padding: 0;
+}
+html, body {
+    background-color: black;
+    height: 100%;
+    position: relative;
+}
+canvas {
+    position: absolute;
+}
+#bg {
+    background-color: #c9f2ff;
+    z-index: 0;
+}
+#fg {
+    z-index: 1;
+}
