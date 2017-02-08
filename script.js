@@ -44,14 +44,15 @@ let game = {
         this.scale = 100;
         this.cx.font = "20px Courier New";
         this.bgCx.font = "20px Courier New";
+        this.bgCx.fillStyle = "green";
+        let groundHeight = this.getGroundHeight();
+        this.bgCx.fillRect(0, groundHeight, this.width, this.height - groundHeight);
         this.bgCx.beginPath();
         this.bgCx.moveTo(10.5, 10);
         this.bgCx.lineTo(10.5, 40);
         this.bgCx.stroke();
+        this.bgCx.fillStyle = "black";
         this.bgCx.fillText("meters", 90, 30);
-        this.bgCx.fillStyle = "green";
-        let groundHeight = this.getGroundHeight();
-        this.bgCx.fillRect(0, groundHeight, this.width, this.height - groundHeight);
     },
     enable: function() {
         this.windowResize();
