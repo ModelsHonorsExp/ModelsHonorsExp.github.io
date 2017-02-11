@@ -1,16 +1,16 @@
 let ttotes = 0;
 class Ball {
-    constructor(h0, v0, angle) {
+    constructor() {
         let self = this;
-        setTimeout(function() {
+        /*setTimeout(function() {
             self.launch(h0, 0, v0 * Math.cos(angle), v0*Math.sin(angle));
-        }, 1000);
+        }, 1000);*/
         this.image = document.createElement("canvas");
         let tempCx = this.image.getContext("2d");
         this.radius = 5;
         this.diameter = this.radius * 2;
-        this.size = [2*this.radius, 2*this.radius];
-        this.pos = [0, h0];
+        //this.size = [2*this.radius, 2*this.radius];
+        this.pos = [0, 0];
         this.image.setAttribute("width", this.radius * 2);
         this.image.setAttribute("height", this.radius * 2);
         tempCx.beginPath();
@@ -20,6 +20,7 @@ class Ball {
         tempCx.stroke();
     }
     launch(h0, x0, v0x, v0y) {
+        this.moving = true;
         this.pos = [x0, h0];
         this.h01 = h0;
         this.x0 = x0;
@@ -117,3 +118,4 @@ Ball.prototype.realRadius = 0.0427;
 //                  Cd        p                             A                                     m
 Ball.prototype.q = (0.5) * (1.225) * (Math.PI * Math.pow(Ball.prototype.realRadius, 2)) / (2 * 0.04593);
 Ball.prototype.g = 9.80665;
+Ball.prototype.moving = false;

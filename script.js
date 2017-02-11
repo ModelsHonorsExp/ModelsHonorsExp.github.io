@@ -19,6 +19,12 @@ let game = {
         window.onresize = function() {
             self.windowResize();
         };
+        window.onkeydown = function() {
+            self.onKeyDown();
+        };
+        window.onclick = function() {
+            self.onKeyDown();
+        };
 
         let img = new Image();
         img.onload = function() {
@@ -54,12 +60,23 @@ let game = {
         this.bgCx.fillStyle = "black";
         this.bgCx.fillText("meters", 90, 30);
     },
+    onKeyDown: function() {
+        if(this.ball.moving) {
+            return 0;
+        }
+        let angle = this.angle * Math.PI / 180;
+        this.ball.launch(0, 0, 58 * Math.cos(angle), 58 * Math.sin(angle));
+    },
     enable: function() {
         this.windowResize();
 
         let self = this;
         this.lastUpdate = Date.now();
-        self.loop = setInterval(function() {
+        this.angle = 5 * Math.PI / 180;
+        this.angleUp = 1;
+        this.power = 2;
+        this.powerUp = 1;
+        this.loop = setInterval(function() {
             self.update();
         }, 0);
     },
@@ -86,6 +103,19 @@ let game = {
         for(let i = 0; i < this.walls.length; i++) {
             this.cx.moveTo(-realLeftEdge + Math.round(this.scale * this.walls[i][0]) - 0.5, groundHeight);
             this.cx.lineTo(-realLeftEdge + Math.round(this.scale * this.walls[i][0]) - 0.5, groundHeight - this.scale * this.walls[i][1]);
+        }
+        if(!this.ball.moving) {
+            this.cx.fillText("Press any key or tap screen", 20, 80);
+            // max angle: 35 deg, min angle: 5 deg, middle: 20 deg, range: 15 deg
+            this.angle += this.angleUp * 60 * dt;
+            if(Math.abs(this.angle - 20) > 15) {
+                this.angle = 20 + this.angleUp * 15;
+                this.angleUp = -this.angleUp;
+            }
+            this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
+            let angle = this.angle * Math.PI / 180;
+            console.log(angle);
+            this.cx.lineTo(-realLeftEdge + 400 * Math.cos(angle), groundHeight - this.ball.radius - 400 * Math.sin(angle));
         }
         this.cx.stroke();
         this.cx.drawImage(this.ball.image, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - this.ball.pos[1]*this.scale - this.ball.diameter);
