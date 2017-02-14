@@ -118,7 +118,6 @@ let game = {
                 }
                 this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
                 let angle = this.angle * Math.PI / 180;
-                console.log(angle);
                 this.cx.lineTo(-realLeftEdge + 400 * Math.cos(angle), groundHeight - this.ball.radius - 400 * Math.sin(angle));
             } else {
                 this.power += this.powerUp * 3 * dt;
