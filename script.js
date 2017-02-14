@@ -26,12 +26,16 @@ let game = {
             self.onKeyDown();
         };
 
-        let img = new Image();
-        img.onload = function() {
-            self.manImage = this;
+        this.manImage = new Image();
+        this.manImage.onload = function() {
             self.ready++;
         }
-        img.src = "man.svg";
+        this.manImage.src = "man.svg";
+        this.ballImage = new Image();
+        this.ballImage.onload = function() {
+            self.ready++;
+        }
+        this.ballImage.src = "ball.svg";
         let loop = setInterval(function() {
             if(self.ready >= 1) {
                 clearInterval(loop);
@@ -131,6 +135,6 @@ let game = {
             }
         }
         this.cx.stroke();
-        this.cx.drawImage(this.ball.image, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - this.ball.pos[1]*this.scale - this.ball.diameter);
+        this.cx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - this.ball.pos[1]*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     }
 }

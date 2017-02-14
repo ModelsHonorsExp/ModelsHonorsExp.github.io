@@ -2,18 +2,9 @@ let ttotes = 0;
 class Ball {
     constructor() {
         let self = this;
-        this.image = document.createElement("canvas");
-        let tempCx = this.image.getContext("2d");
         this.radius = 5;
         this.diameter = this.radius * 2;
         this.pos = [0, 0];
-        this.image.setAttribute("width", this.radius * 2);
-        this.image.setAttribute("height", this.radius * 2);
-        tempCx.beginPath();
-        tempCx.arc(this.radius, this.radius, this.radius - 1, 0, 2*Math.PI);
-        tempCx.fillStyle = "white";
-        tempCx.fill();
-        tempCx.stroke();
     }
     launch(h0, x0, v0x, v0y) {
         this.moving = true;
@@ -100,8 +91,6 @@ class Ball {
         } else if (!isNaN(this.time)) {
             if(this.nextLaunch) {
                 this.launch.apply(this, this.nextLaunch);
-            //
-
             } else {
                 this.pos[1] = 0;
                 this.pos[0] = this.getRange(this.tend);
