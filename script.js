@@ -64,17 +64,20 @@ let game = {
         if(this.ball.moving) {
             return 0;
         }
-        let angle = this.angle * Math.PI / 180;
-        this.ball.launch(0, 0, 58 * Math.cos(angle), 58 * Math.sin(angle));
+        if(!this.launchAngle) {
+            this.launchAngle = this.angle * Math.PI / 180;
+        } else {
+            this.ball.launch(0, 0, 58 * Math.cos(this.launchAngle) * this.power, 58 * Math.sin(this.launchAngle) * this.power);
+        }
     },
     enable: function() {
         this.windowResize();
 
         let self = this;
         this.lastUpdate = Date.now();
-        this.angle = 5 * Math.PI / 180;
+        this.angle = 5;
         this.angleUp = 1;
-        this.power = 2;
+        this.power = 0.2;
         this.powerUp = 1;
         this.loop = setInterval(function() {
             self.update();
@@ -106,16 +109,27 @@ let game = {
         }
         if(!this.ball.moving) {
             this.cx.fillText("Press any key or tap screen", 20, 80);
-            // max angle: 35 deg, min angle: 5 deg, middle: 20 deg, range: 15 deg
-            this.angle += this.angleUp * 60 * dt;
-            if(Math.abs(this.angle - 20) > 15) {
-                this.angle = 20 + this.angleUp * 15;
-                this.angleUp = -this.angleUp;
+            if(!this.launchAngle) {
+                // max angle: 35 deg, min angle: 5 deg, middle: 20 deg, range: 15 deg
+                this.angle += this.angleUp * 60 * dt;
+                if(Math.abs(this.angle - 20) > 15) {
+                    this.angle = 20 + this.angleUp * 15;
+                    this.angleUp = -this.angleUp;
+                }
+                this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
+                let angle = this.angle * Math.PI / 180;
+                console.log(angle);
+                this.cx.lineTo(-realLeftEdge + 400 * Math.cos(angle), groundHeight - this.ball.radius - 400 * Math.sin(angle));
+            } else {
+                this.power += this.powerUp * 3 * dt;
+                // max power: 1, min power: 0.2, middle: 0.6, range: 0.8
+                if(Math.abs(this.power - 0.6) > 0.4) {
+                    this.power = 0.6 + 0.4 * this.powerUp;
+                    this.powerUp = -this.powerUp;
+                }
+                this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
+                this.cx.lineTo(-realLeftEdge + 400 * Math.cos(this.launchAngle) * this.power, groundHeight - this.ball.radius - 400 * Math.sin(this.launchAngle) * this.power);
             }
-            this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
-            let angle = this.angle * Math.PI / 180;
-            console.log(angle);
-            this.cx.lineTo(-realLeftEdge + 400 * Math.cos(angle), groundHeight - this.ball.radius - 400 * Math.sin(angle));
         }
         this.cx.stroke();
         this.cx.drawImage(this.ball.image, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - this.ball.pos[1]*this.scale - this.ball.diameter);

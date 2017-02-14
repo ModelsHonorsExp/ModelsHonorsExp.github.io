@@ -2,14 +2,10 @@ let ttotes = 0;
 class Ball {
     constructor() {
         let self = this;
-        /*setTimeout(function() {
-            self.launch(h0, 0, v0 * Math.cos(angle), v0*Math.sin(angle));
-        }, 1000);*/
         this.image = document.createElement("canvas");
         let tempCx = this.image.getContext("2d");
         this.radius = 5;
         this.diameter = this.radius * 2;
-        //this.size = [2*this.radius, 2*this.radius];
         this.pos = [0, 0];
         this.image.setAttribute("width", this.radius * 2);
         this.image.setAttribute("height", this.radius * 2);
