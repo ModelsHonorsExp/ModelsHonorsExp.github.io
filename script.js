@@ -47,7 +47,7 @@ let game = {
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
 
-        this.scale = 100;
+        this.scale = Infinity;
         this.cx.font = "20px Courier New";
         this.bgCx.font = "20px Courier New";
         this.bgCx.fillStyle = "green";
