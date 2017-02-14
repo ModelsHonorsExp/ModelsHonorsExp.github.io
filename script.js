@@ -101,8 +101,8 @@ let game = {
         this.cx.drawImage(this.manImage, -realLeftEdge - manWidth - 1, groundHeight - manHeight, manWidth, manHeight);
         this.cx.beginPath();
         for(let i = 0; i < this.walls.length; i++) {
-            this.cx.moveTo(-realLeftEdge + Math.round(this.scale * this.walls[i][0]) - 0.5, groundHeight);
-            this.cx.lineTo(-realLeftEdge + Math.round(this.scale * this.walls[i][0]) - 0.5, groundHeight - this.scale * this.walls[i][1]);
+            this.cx.moveTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight);
+            this.cx.lineTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight - this.scale * this.walls[i][1]);
         }
         if(!this.ball.moving) {
             this.cx.fillText("Press any key or tap screen", 20, 80);
