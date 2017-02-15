@@ -11,9 +11,9 @@ let game = {
         this.bgCx.font = "20px Courier New";
         this.leftEdge = -2;
         this.groundHeight = 100;
-        this.walls = [[32, 8], [37, 10]];
+        this.walls = [[60, 8], [80, 10]];
         Ball.prototype.walls = this.walls;
-        this.ball = new Ball(0, 58, 15 * Math.PI / 180);
+        this.ball = new Ball();
         this.last = [0, 0];
         let self = this;
         window.onresize = function() {
@@ -62,7 +62,7 @@ let game = {
         this.bgCx.lineTo(10.5, 40);
         this.bgCx.stroke();
         this.bgCx.fillStyle = "black";
-        this.bgCx.fillText("meters", 90, 30);
+        this.bgCx.fillText("yards", 90, 30);
     },
     onKeyDown: function() {
         if(this.ball.moving) {
@@ -79,7 +79,7 @@ let game = {
 
         let self = this;
         this.lastUpdate = Date.now();
-        this.angle = 5;
+        this.angle = 10;
         this.angleUp = 1;
         this.power = 0.2;
         this.powerUp = 1;
@@ -101,7 +101,7 @@ let game = {
         }
         let realLeftEdge = this.scale * this.leftEdge;
         this.lastUpdate = now;
-        this.cx.fillText(Math.round(1000 * 30 / this.scale) / 1000, 20, 30);
+        this.cx.fillText(Math.round(1000 * 30 / this.scale * 1.09361) / 1000, 20, 30);
         let manHeight = 1.8 * this.scale;
         let manWidth = manHeight / 3;
         let groundHeight = this.getGroundHeight();
@@ -114,10 +114,10 @@ let game = {
         if(!this.ball.moving) {
             this.cx.fillText("Press any key or tap screen", 20, 80);
             if(!this.launchAngle) {
-                // max angle: 35 deg, min angle: 5 deg, middle: 20 deg, range: 15 deg
-                this.angle += this.angleUp * 60 * dt;
-                if(Math.abs(this.angle - 20) > 15) {
-                    this.angle = 20 + this.angleUp * 15;
+                // max angle: 20 deg, min angle: 10 deg, middle: 15 deg, range: 10 deg
+                this.angle += this.angleUp * 30 * dt;
+                if(Math.abs(this.angle - 15) > 5) {
+                    this.angle = 15 + this.angleUp * 5;
                     this.angleUp = -this.angleUp;
                 }
                 this.cx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);

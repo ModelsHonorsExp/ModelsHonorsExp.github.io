@@ -54,6 +54,22 @@ class Ball {
         this.nextLaunch = undefined;
         this.tend = est + this.tmax;
         ttotes += this.tend;
+
+        let vxf = this.getXVelocity(this.tend);
+        let vyf = this.getYVelocity(this.tend);
+        let vf = Math.sqrt(Math.pow(vxf, 2) + Math.pow(vyf, 2));
+        let theta1 = Math.atan(Math.abs(vxf/vyf));
+
+        if(vf <= 20) {
+            var rest = 0.510 - 0.0375*vf + 0.000903*Math.pow(vf, 2);
+        } else {
+            var rest = 0.12;
+        }
+        let thetac = 15.4*vf*theta1/(18.6*44.4);
+        console.log(vf);
+        if(thetac > 0.017) {
+            this.nextLaunch = [0, this.getRange(this.tend), Math.sign(vxf)*vf*rest*Math.cos(thetac), vf*rest*Math.sin(thetac)];
+        }
     }
     getHeight(time) {
         if(time <= this.tmax) {
@@ -99,7 +115,7 @@ class Ball {
         }
     }
 }
-Ball.prototype.realRadius = 0.0427;
+Ball.prototype.realRadius = 0.02135;
 //                  Cd        p                             A                                     m
 Ball.prototype.q = (0.5) * (1.225) * (Math.PI * Math.pow(Ball.prototype.realRadius, 2)) / (2 * 0.04593);
 Ball.prototype.g = 9.80665;
