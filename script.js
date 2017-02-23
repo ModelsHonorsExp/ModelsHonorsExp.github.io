@@ -16,9 +16,7 @@ let game = {
         // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
         this.walls = [[60, 60.5, 8], [68, 78, 10]];
         // Giving the Ball class access to this.walls
-        Ball.prototype.walls = this.walls;
-        // Create the ball, which calculates the launches, bounces, etc. See Ball.js
-        this.ball = new Ball();
+        this.ball.walls = this.walls;
         // let self = this; declares the game object as a local variable so it can be used in callback functions, etc.
         let self = this;
         window.onresize = function() {
