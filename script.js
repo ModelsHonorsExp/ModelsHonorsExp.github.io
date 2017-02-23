@@ -185,6 +185,8 @@ let game = {
             this.cx.stroke();
         }
         // Draw the ball
+        // Commented line below is for discussion purposes - I'm on the fence about which of these to use
+        // this.cx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - (this.ball.pos[1] + this.ball.realRadius)*this.scale - this.ball.radius, this.ball.diameter, this.ball.diameter);
         this.cx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos[0]*this.scale - this.ball.radius, groundHeight - this.ball.pos[1]*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     }
 }
