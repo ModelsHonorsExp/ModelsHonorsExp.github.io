@@ -151,6 +151,7 @@ let game = {
                              this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
         }
         if(!this.ball.moving) {
+            // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
             // If we're awaiting input
             // Tell the user we're awaiting input
             this.cx.fillText("Press any key or tap screen", 20, 80);
