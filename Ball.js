@@ -1,4 +1,3 @@
-let ttotes = 0;
 class Ball {
     constructor() {
         let self = this;
@@ -27,33 +26,39 @@ class Ball {
         this.signVx = Math.sign(this.v0x);
         this.C = Math.abs((this.v0y2 - Math.sqrt(this.g / this.q)) / (this.v0y2 + Math.sqrt(this.g / this.q)));
         this.alpha = 2*Math.sqrt(this.q * this.g);
-        let signVx = this.signVx;
+        let signVx = this.signVx; // For use in function below
         this.walls.sort(function (a, b) {
             return (a[0] - b[0]) * signVx;
         });
 
+        let est = (this.v0y1 + Math.sqrt(Math.pow(this.v0y1, 2) + 2*this.g*this.h01)) / this.g;
+        let side = (1 - this.signVx) / 2; // 0 (left side of wall) if we're moving right, 1 (right side) if we're moving left
         for(let i = 0; i < this.walls.length; i++) {
-            let edgeX = this.walls[i][0] - this.signVx * this.realRadius;
+            let top = this.walls[i][2] + this.realRadius;
+            let tAtTop = this.getTimeFromHeight(top, est);
+            let rAtTop = this.getRange(tAtTop);
+            if(tAtTop > 0 && rAtTop > this.walls[i][0] && rAtTop < this.walls[i][1]) {
+                // bounce off of top of wall
+                let yvel = -this.getYVelocity(tAtTop);
+                let xvel = this.getXVelocity(tAtTop);
+                this.nextLaunch = [top, rAtTop, xvel, yvel];
+                this.tend = tAtTop;
+                return 0;
+            }
+
+            let edgeX = this.walls[i][side] - this.signVx * this.realRadius;
             let tAtWall = this.getTimeFromRange(edgeX);
             let hAtWall = this.getHeight(tAtWall);
-            if(tAtWall > 0 && hAtWall > 0 && hAtWall < this.walls[i][1]) {
+            if(tAtWall > 0 && hAtWall > 0 && hAtWall < this.walls[i][2]) {
                 let yvel = this.getYVelocity(tAtWall);
                 let xvel = -this.getXVelocity(tAtWall);
                 this.nextLaunch = [hAtWall, edgeX, xvel, yvel];
                 this.tend = tAtWall;
-                ttotes += this.tend;
                 return 0;
             }
         }
-        let est = (this.v0y1 + Math.sqrt(Math.pow(this.v0y1, 2) + 2*this.g*this.h01)) / this.g;
-        for(let i = 0; i < 14; i++) {
-            let v = Math.sqrt(this.g / this.q) * (1 - this.C*Math.exp(this.alpha*est)) / (1 + this.C*Math.exp(this.alpha*est));
-            let h = this.getHeight(est + this.tmax);
-            est -= h / v;
-        }
+        this.tend = this.getTimeFromHeight(0, est);
         this.nextLaunch = undefined;
-        this.tend = est + this.tmax;
-        ttotes += this.tend;
 
         let vxf = this.getXVelocity(this.tend);
         let vyf = this.getYVelocity(this.tend);
@@ -66,7 +71,6 @@ class Ball {
             var rest = 0.12;
         }
         let thetac = 15.4*vf*theta1/(18.6*44.4);
-        console.log(vf);
         if(thetac > 0.017) {
             this.nextLaunch = [0, this.getRange(this.tend), Math.sign(vxf)*vf*rest*Math.cos(thetac), vf*rest*Math.sin(thetac)];
         }
@@ -85,6 +89,16 @@ class Ball {
     }
     getTimeFromRange(range) {
         return (Math.exp(this.signVx * (range - this.x0) * this.q) - 1) / (Math.abs(this.v0x) * this.q);
+    }
+    getTimeFromHeight(height, guess) {
+        // NOTE: this only finds the time when the ball is going down, as it's irrelevant going up in all cases so far. If a ceiling is added, life is gonna suck
+        let est = guess - this.tmax;
+        for(let i = 0; i < 14; i++) {
+            let v = Math.sqrt(this.g / this.q) * (1 - this.C*Math.exp(this.alpha*est)) / (1 + this.C*Math.exp(this.alpha*est));
+            let h = this.getHeight(est + this.tmax) - height;
+            est -= h / v;
+        }
+        return est + this.tmax;
     }
     getXVelocity(time) {
         return this.v0x / (1 + Math.abs(this.v0x) * this.q * time);

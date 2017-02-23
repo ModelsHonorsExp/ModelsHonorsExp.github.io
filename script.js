@@ -11,7 +11,7 @@ let game = {
         this.bgCx.font = "20px Courier New";
         this.leftEdge = -2;
         this.groundHeight = 100;
-        this.walls = [[60, 8], [80, 10]];
+        this.walls = [[60, 60.5, 8], [68, 78, 10]];
         Ball.prototype.walls = this.walls;
         this.ball = new Ball();
         this.last = [0, 0];
@@ -108,8 +108,10 @@ let game = {
         this.cx.drawImage(this.manImage, -realLeftEdge - manWidth - 1, groundHeight - manHeight, manWidth, manHeight);
         this.cx.beginPath();
         for(let i = 0; i < this.walls.length; i++) {
-            this.cx.moveTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight);
-            this.cx.lineTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight - this.scale * this.walls[i][1]);
+            /*this.cx.moveTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight);
+            this.cx.lineTo(Math.round(-realLeftEdge + this.scale * this.walls[i][0]) - 0.5, groundHeight - this.scale * this.walls[i][1]);*/
+            this.cx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
+                             this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
         }
         if(!this.ball.moving) {
             this.cx.fillText("Press any key or tap screen", 20, 80);
