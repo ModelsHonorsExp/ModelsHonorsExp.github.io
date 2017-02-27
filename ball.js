@@ -51,7 +51,7 @@ game.ball = {
             // Check if the bottom center of the ball hits the top of the wall
             let tAtTop = this.getTimeFromHeight(this.walls[i][2], est);
             let rAtTop = this.getRange(tAtTop);
-            if(tAtTop > 0 && rAtTop > this.walls[i][0] && rAtTop < this.walls[i][1]) {
+            if(tAtTop && rAtTop > this.walls[i][0] && rAtTop < this.walls[i][1]) {
                 // If it does
                 // Bounce off of top of wall (assuming completely elastic collision with infinitely massive Earth - basically true if the walls are steel or something. Close enough)
                 let yvel = -this.getYVelocity(tAtTop);
@@ -135,12 +135,16 @@ game.ball = {
         // NOTE: this only finds the time when the ball is going down, as it's irrelevant going up in all cases so far. If a ceiling is added, life is gonna suck
         // Newton method
         let est = guess - this.tmax;
-        for(let i = 0; i < 14; i++) {
+        for(let i = 0; i < 20; i++) {
             let v = Math.sqrt(this.g / this.q) * (1 - this.C*Math.exp(this.alpha*est)) / (1 + this.C*Math.exp(this.alpha*est));
             let h = this.getHeight(est + this.tmax) - height;
             est -= h / v;
         }
-        return est + this.tmax;
+        est += this.tmax;
+        if(est < 0 || Math.abs(this.getHeight(est) - height) > 0.1) {
+            return undefined;
+        }
+        return est;
     },
     getXVelocity: function(time) {
         // See the MATLAB code
