@@ -9,6 +9,8 @@ let game = {
         // cx is short for context, this is what you use to draw to a canvas.
         this.leftCx = this.leftCanvas.getContext("2d");
         this.rightCx = this.rightCanvas.getContext("2d");
+        // Like this.scale but for the right canvas
+        this.rightScale = 5;
         // Setting font for fillText
         this.bgCx = this.bg.getContext("2d");
         // this.leftEdge is the coordinate in meters of the left edge of the canvas
@@ -17,8 +19,6 @@ let game = {
         this.groundHeight = 100;
         // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
         this.walls = [[60, 60.5, 8], [68, 78, 10]];
-        // Giving the Ball class access to this.walls
-        this.ball.walls = this.walls;
         // let self = this; declares the game object as a local variable so it can be used in callback functions, etc.
         let self = this;
         window.onresize = function() {
@@ -73,6 +73,10 @@ let game = {
         // Resizing canvases fucks up all the fill options so we have to set those again
         this.leftCx.font = "20px Courier New";
         this.bgCx.font = "20px Courier New";
+        this.rightCx.strokeStyle = "white";
+        this.rightCx.lineWidth = 4;
+        this.leftCx.strokeStyle = "gray";
+        this.leftCx.lineWidth = 4;
         // Set background fill color to green
         this.bgCx.fillStyle = "green";
         let groundHeight = this.getGroundHeight();
@@ -103,10 +107,15 @@ let game = {
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
         if(!this.launchAngleSet) {
             this.launchAngleSet = true;
+            this.up = 1;
+        } else if(!this.lateralAngleSet) {
+            this.lateralAngleSet = true;
+            this.up = 1;
             this.power = 0.2;
         } else {
             // See Ball.launch()
-            this.ball.launch(0, 0, 58 * Math.cos(this.angle) * this.power, 58 * Math.sin(this.angle) * this.power);
+            let vLateral = 58 * Math.cos(this.angle) * this.power;
+            this.ball.launch(0, 0, 0, vLateral * Math.cos(this.LAngle), vLateral * Math.sin(this.LAngle), 58 * Math.sin(this.angle) * this.power);
         }
     },
     enable: function() {
@@ -118,11 +127,11 @@ let game = {
         this.lastUpdate = Date.now();
         // this.angle is used during oscillation to keep track of where it is while going up and down.
         this.angle = 0.174;
-        // this.angleUp keeps track of whether we're oscillating up or down
-        this.angleUp = 1;
+        // this.up keeps track of whether we're oscillating up or down
+        this.up = 1;
         // Same as angle stuff
+        this.LAngle = 0;
         this.power = 1;
-        this.powerUp = 1;
         // Start running updates
         this.loop = setInterval(function() {
             self.update();
@@ -148,22 +157,31 @@ let game = {
                 // If launch angle isn't finalized
                 // Oscillate between ~10 and ~20 degrees
                 // max angle: 0.348 rad, min angle: 0.174 rad, middle: 0.261 rad, range: 0.174 rad
-                this.angle += this.angleUp * 0.524 * dt;
+                this.angle += this.up * 0.524 * dt;
                 if(Math.abs(this.angle - 0.261) > 0.087) {
-                    this.angle = 0.261 + this.angleUp * 0.087;
-                    this.angleUp = -this.angleUp;
+                    this.angle = 0.261 + this.up * 0.087;
+                    this.up = -this.up;
+                }
+            } else if(!this.lateralAngleSet) {
+                // If lateral angle isn't finalized
+                // Oscillate between ~-40 and ~40 degrees
+                // max angle: 0.7 rad, min angle: -0.7 rad, middle: 0 rad, range: 1.4 rad
+                this.LAngle += this.up * 2 * dt;
+                if(Math.abs(this.LAngle) > 0.7) {
+                    this.LAngle = this.up * 0.7;
+                    this.up = -this.up;
                 }
             } else {
                 // If power isn't finalized
                 // Oscillate between 0.2 and 1 arbitrary power units, which are a multiplier on our launch speed
                 // max power: 1, min power: 0.2, middle: 0.6, range: 0.8
-                this.power += this.powerUp * 3 * dt;
+                this.power += this.up * 3 * dt;
                 if(Math.abs(this.power - 0.6) > 0.4) {
-                    this.power = 0.6 + 0.4 * this.powerUp;
-                    this.powerUp = -this.powerUp;
+                    this.power = 0.6 + 0.4 * this.up;
+                    this.up = -this.up;
                 }
             }
         }
         this.render();
-    }
+    },
 }
