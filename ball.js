@@ -3,7 +3,7 @@ game.ball = {
         // Ball is moving now
         this.moving = true;
         // Position of the bottom center of the ball
-        this.pos = [x0, h0];
+        this.pos = [x0, h0, 0];
         // initial height for first half of flight (going upward)
         this.h01 = h0;
         // initial x position
@@ -194,7 +194,7 @@ game.ball.moving = false;
 // Radius of image in pixels (for drawing purposes)
 game.ball.radius = 5;
 // Initial position
-game.ball.pos = [0, 0];
+game.ball.pos = [0, 0, 0];
 // Diameter of image in pixels (for drawing purposes)
 game.ball.diameter = game.ball.radius * 2;
 // q value
