@@ -16,7 +16,7 @@ game.ball = {
         // Lateral velocity
         let vLat = v0lat;
         // Delta t, lower = higher precision and longer swing time
-        this.dt = Math.pow(10, -6);
+        this.dt = Math.pow(10, -5);
         // Spin decay per iteration
         let decay = Math.exp(-this.dt/30);
         let s = spin;
