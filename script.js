@@ -46,7 +46,7 @@ let game = {
         this.ballImage.src = "ball.svg";
         // This loop waits for both images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready >= 1) {
+            if(self.ready >= 2) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -114,8 +114,7 @@ let game = {
             this.power = 0.2;
         } else {
             // See Ball.launch()
-            let vLateral = 58 * Math.cos(this.angle) * this.power;
-            this.ball.launch(0, 0, 0, vLateral * Math.cos(this.LAngle), vLateral * Math.sin(this.LAngle), 58 * Math.sin(this.angle) * this.power);
+            this.ball.launch(58 * Math.cos(this.angle) * this.power, this.LAngle, 58 * Math.sin(this.angle) * this.power, 0);
         }
     },
     enable: function() {
@@ -152,7 +151,6 @@ let game = {
         if(!this.ball.moving) {
             // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
             // If we're awaiting input
-            // Tell the user we're awaiting input
             if(!this.launchAngleSet) {
                 // If launch angle isn't finalized
                 // Oscillate between ~10 and ~20 degrees
