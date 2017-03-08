@@ -10,16 +10,24 @@ game.ball = {
         this.h = [0];
         // Lateral position array
         // Everything lateral is just x and z in the plane of the lateral angle
-        this.lat = [0];
+        this.x = [0];
+        this.z = [0];
         // Vertical velocity
         let vY = v0y;
         // Lateral velocity
         let vLat = v0lat;
+        let sinLat = Math.sin(angleLat);
+        let cosLat = Math.cos(angleLat);
         // Delta t, lower = higher precision and longer swing time
         this.dt = Math.pow(10, -5);
         // Spin decay per iteration
         let decay = Math.exp(-this.dt/30);
         let s = spin;
+
+        let xSign = Math.sign(cosLat);
+        let xIndex = (1 - xSign) / 2;
+        let xCurrent = xIndex * (game.walls.length - 1);
+
         while(this.divs == 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground
             // TODO: walls
             // Net velocity magnitude
@@ -33,7 +41,17 @@ game.ball = {
             vY += aY * this.dt;
             vLat += aLat * this.dt;
             this.h[this.divs] = this.h[this.divs-1] + vY * this.dt;
-            this.lat[this.divs] = this.lat[this.divs-1] + vLat * this.dt;
+            this.x[this.divs] = this.x[this.divs-1] + vLat * this.dt * cosLat;
+            this.z[this.divs] = this.z[this.divs-1] + vLat * this.dt * sinLat;
+            if(game.walls[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * game.walls[xCurrent][xIndex] - this.realRadius * xSign) {
+                if(this.h[this.divs] <= game.walls[xCurrent][2]) {
+                    this.x[this.divs] = game.walls[xCurrent][xIndex] - this.realRadius * xSign;
+                    cosLat = -cosLat;
+                    xSign = -xSign;
+                    xIndex = 1 - xIndex;
+                }
+                xCurrent += xSign;
+            }
             // Increase iterative variable
             this.divs++;
         }
@@ -62,8 +80,8 @@ game.ball = {
             index = this.divs - 1;
             return 0;
         }
-        this.pos.x = this.lat[index] * Math.cos(this.angleLat);
-        this.pos.z = this.lat[index] * Math.sin(this.angleLat);
+        this.pos.x = this.x[index];
+        this.pos.z = this.z[index];
     }
 }
 
