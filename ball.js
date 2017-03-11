@@ -27,8 +27,8 @@ game.ball = {
         let xSign = Math.sign(cosLat);
         let xIndex = (1 - xSign) / 2;
         let xCurrent = xIndex * (game.walls.length - 1);
-        while(game.walls[xCurrent] !== undefined && this.pos.x > game.walls[xCurrent][xIndex]) {
-            xCurrent++;
+        while(game.walls[xCurrent] !== undefined && xSign * this.pos.x > xSign * game.walls[xCurrent][xIndex]) {
+            xCurrent += xSign;
         }
 
         while(this.divs == 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground

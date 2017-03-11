@@ -48,7 +48,7 @@ game.render = function(dt) {
         let left = -realLeftEdge + this.ball.pos.x * this.scale;
         let bot = groundHeight - this.ball.radius;
         this.leftCx.moveTo(left, bot);
-        this.leftCx.lineTo(left + 400 * Math.cos(this.angle) * this.power, bot - 400 * Math.sin(this.angle) * this.power);
+        this.leftCx.lineTo(left + 400 * Math.cos(this.angle) * this.power * this.launchDir, bot - 400 * Math.sin(this.angle) * this.power);
         // Write the line to the screen
         this.leftCx.stroke();
         if(this.launchAngleSet) {
@@ -56,7 +56,7 @@ game.render = function(dt) {
             bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
             this.rightCx.beginPath();
             this.rightCx.moveTo(left, bot);
-            this.rightCx.lineTo(left + Math.sin(this.LAngle) * 200 * this.power, bot - Math.cos(this.LAngle) * 200 * this.power);
+            this.rightCx.lineTo(left + Math.sin(this.LAngle) * 200 * this.power, bot - Math.cos(this.LAngle) * 200 * this.power * this.launchDir);
             this.rightCx.stroke();
         }
     }
