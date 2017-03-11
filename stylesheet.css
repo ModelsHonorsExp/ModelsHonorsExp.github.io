@@ -3,6 +3,7 @@
    padding: 0;
 }
 html, body {
+    touch-action: manipulation;
     background-color: black;
     height: 100%;
     position: relative;
