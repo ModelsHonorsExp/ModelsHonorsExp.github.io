@@ -7,11 +7,11 @@ game.ball = {
         this.divs = 1;
         // Height array
         // TODO: look into preallocating with an estimated amount of entries to save time for this.h and this.lat
-        this.h = [0];
+        this.h = [this.pos.y];
         // Lateral position array
         // Everything lateral is just x and z in the plane of the lateral angle
-        this.x = [0];
-        this.z = [0];
+        this.x = [this.pos.x];
+        this.z = [this.pos.z];
         // Vertical velocity
         let vY = v0y;
         // Lateral velocity
@@ -27,6 +27,9 @@ game.ball = {
         let xSign = Math.sign(cosLat);
         let xIndex = (1 - xSign) / 2;
         let xCurrent = xIndex * (game.walls.length - 1);
+        while(game.walls[xCurrent] !== undefined && this.pos.x > game.walls[xCurrent][xIndex]) {
+            xCurrent++;
+        }
 
         while(this.divs == 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground
             // TODO: walls
@@ -78,7 +81,7 @@ game.ball = {
             // Put us on the ground on the last frame
             this.pos.y = 0;
             index = this.divs - 1;
-            return 0;
+            this.moving = false;
         }
         this.pos.x = this.x[index];
         this.pos.z = this.z[index];

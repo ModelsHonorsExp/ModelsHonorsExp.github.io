@@ -14,7 +14,7 @@ let game = {
         // Setting font for fillText
         this.bgCx = this.bg.getContext("2d");
         // this.leftEdge is the coordinate in meters of the left edge of the canvas
-        this.leftEdge = -0.9;
+        this.leftEdge = Infinity;
         // this.groundHeight is the height of the ground above the bottom of the canvas in pixels (the zero point of height in meters).
         this.groundHeight = 100;
         // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
@@ -115,6 +115,15 @@ let game = {
         } else {
             // See Ball.launch()
             this.ball.launch(58 * Math.cos(this.angle) * this.power, this.LAngle, 58 * Math.sin(this.angle) * this.power, 0);
+            this.angle = 0.174;
+            // this.up keeps track of whether we're oscillating up or down
+            this.up = 1;
+            // Same as angle stuff
+            this.LAngle = 0;
+            this.power = 1;
+            this.launchAngleSet = false;
+            this.lateralAngleSet = false;
+
         }
     },
     enable: function() {
@@ -180,6 +189,6 @@ let game = {
                 }
             }
         }
-        this.render();
+        this.render(dt);
     },
 }
