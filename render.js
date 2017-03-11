@@ -2,18 +2,22 @@ game.render = function(dt) {
     // Clear foreground for redraw
     this.leftCx.clearRect(0, 0, this.leftWidth, this.height);
     this.rightCx.clearRect(0, 0, this.rightWidth, this.height);
-    let leftEdge = this.ball.pos.x - 1 - 100 / this.scale;
-    if(leftEdge < this.leftEdge) {
+    let leftEdge = this.ball.pos.x - 5.5 + 4.5*this.launchDir - 100 / this.scale;
+    if(leftEdge < this.leftEdge && (this.ball.moving || this.leftEdge === Infinity)) {
         let width = this.leftWidth / this.scale + this.leftEdge - leftEdge;
         if(this.leftEdge !== Infinity) {
-            this.scale = this.leftWidth / (width);
+            this.scale = this.leftWidth / width;
         }
         this.leftEdge = leftEdge;
     }
-    let scale = this.leftWidth / (this.ball.pos.x - this.leftEdge + 10) / 1.1;
-    if(scale < this.scale) {
-        // If the scale is shrinking, don't change it.
-        this.scale = scale;
+    if(!this.lockScale || this.scale === Infinity) {
+        var scale = this.leftWidth / (this.ball.pos.x - this.leftEdge + 5.5 + 4.5*this.launchDir) / 1.1;
+        if(scale < this.scale && (this.ball.moving || this.scale === Infinity)) {
+            // If the scale is shrinking, don't change it.
+            this.scale = scale;
+        }
+    } else {
+        var scale = this.leftWidth / (this.ball.pos.x - leftEdge + 5.5 + 4.5*this.launchDir) / 1.1;
     }
     // Calculate left edge in pixels - for drawing purposes.
     let realLeftEdge = this.scale * this.leftEdge;
@@ -36,6 +40,7 @@ game.render = function(dt) {
             if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
                 this.leftEdge = leftEdge;
                 this.scale = scale;
+                this.lockScale = false;
             }
             this.leftEdge = (this.leftEdge + leftEdge * 2 * dt) / (1 + 2 * dt);
             this.scale = (this.scale + scale * 2 * dt) / (1 + 2 * dt);

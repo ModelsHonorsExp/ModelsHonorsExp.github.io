@@ -106,9 +106,11 @@ let game = {
         }
         if(keyCode === 37) {
             this.launchDir = -1;
+            this.lockScale = true;
             return 0;
         } if (keyCode === 39) {
             this.launchDir = 1;
+            this.lockScale = true;
             return 0;
         }
 
@@ -125,6 +127,7 @@ let game = {
             if(this.launchDir === -1) {
                 this.LAngle = Math.PI - this.LAngle;
             }
+            this.lockScale = false;
             this.ball.launch(58 * Math.cos(this.angle) * this.power, this.LAngle, 58 * Math.sin(this.angle) * this.power, 0);
             this.angle = 0.174;
             // this.up keeps track of whether we're oscillating up or down
