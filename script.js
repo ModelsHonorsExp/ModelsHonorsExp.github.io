@@ -1,21 +1,19 @@
 let game = {
     ready: 0,
     start: function() {
-        // There are two canvases - the foreground (this.leftCanvas) and background (this.bg). this.leftCanvas gets updated every frame, this.bg stays as long as the window isn't resized.
-        // They're layered, and this.leftCanvas has a transparent background.
+        // There are three canvases - the foreground (this.leftCanvas and this.rightCanvas) and background (this.bg)
+        // The foreground gets updated every frame, this.bg stays as long as the window isn't resized
+        // They're layered, and the foreground has a transparent background
         this.leftCanvas = document.querySelector("#left");
         this.rightCanvas = document.querySelector("#right");
         this.bg = document.querySelector("#bg");
-        // cx is short for context, this is what you use to draw to a canvas.
+        // cx is short for context, this is what you use to draw to a canvas
         this.leftCx = this.leftCanvas.getContext("2d");
         this.rightCx = this.rightCanvas.getContext("2d");
-        // Like this.scale but for the right canvas
-        this.rightScale = 5;
-        // Setting font for fillText
         this.bgCx = this.bg.getContext("2d");
         // this.leftEdge is the coordinate in meters of the left edge of the canvas
         this.leftEdge = -0.9;
-        // this.groundHeight is the height of the ground above the bottom of the canvas in pixels (the zero point of height in meters).
+        // this.groundHeight is the height of the ground above the bottom of the canvas in pixels (the zero point of height in meters)
         this.groundHeight = 100;
         // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
         this.walls = [[60, 60.5, 8], [68, 78, 10]];
@@ -32,7 +30,6 @@ let game = {
         window.onclick = function() {
             self.onKeyDown();
         };
-
         // Images in JS load asynchonously, so we give a callback that iincrements game.ready. Once that hits 2, we know that both images have been loaded.
         this.manImage = new Image();
         this.manImage.onload = function() {
@@ -44,9 +41,14 @@ let game = {
             self.ready++;
         }
         this.ballImage.src = "ball.svg";
-        // This loop waits for both images to load, then starts the game. See game.enable()
+        this.treeImage = new Image();
+        this.treeImage.onload = function() {
+            self.ready++;
+        }
+        this.treeImage.src = "tree.svg";
+        // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready >= 2) {
+            if(self.ready > 2) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -65,12 +67,7 @@ let game = {
         this.leftCanvas.setAttribute("height", this.height);
         this.rightCanvas.setAttribute("width", this.rightWidth);
         this.rightCanvas.setAttribute("height", this.height);
-
-        // this.scale is set in the update loop - setting it to Infinity ensures that it is set properly the first time through the update loop.
-        // It describes the zoom level in pixels per meter.
-        this.scale = Infinity;
-
-        // Resizing canvases fucks up all the fill options so we have to set those again
+        // Resizing canvases f%$#s up all the fill options, so we have to set those again
         this.leftCx.font = "20px Courier New";
         this.bgCx.font = "20px Courier New";
         this.rightCx.strokeStyle = "white";
@@ -89,13 +86,13 @@ let game = {
         this.bgCx.moveTo(10.5, 10);
         this.bgCx.lineTo(10.5, 40);
         this.bgCx.stroke();
+        // Draw line that divides the screen
         this.bgCx.lineWidth = 4;
         this.bgCx.beginPath();
         this.bgCx.moveTo(this.leftWidth, 0);
         this.bgCx.lineTo(this.leftWidth, this.height);
         this.bgCx.stroke();
-
-        // Putting this on the background means we only have to redraw the number every frame, plus keeps it in a consistent location.
+        // Putting this on the background means we only have to redraw the number every frame, plus keeps it in a consistent location
         this.bgCx.fillStyle = "black";
         this.bgCx.fillText("yards", 90, 30);
     },
@@ -120,8 +117,6 @@ let game = {
     enable: function() {
         // When the game first loads, we simulate a window resize to set things up.
         this.windowResize();
-
-        let self = this;
         // this.lastUpdate is used to calculate dt
         this.lastUpdate = Date.now();
         // this.angle is used during oscillation to keep track of where it is while going up and down.
@@ -131,6 +126,23 @@ let game = {
         // Same as angle stuff
         this.LAngle = 0;
         this.power = 1;
+        // this.scale is set in the update loop - setting it to Infinity ensures that it is set properly the first time through the update loop.
+        // It describes the zoom level in pixels per meter
+        this.scale = Infinity;
+        // Like this.scale but for the right canvas, which is now equivalent to 165 meters
+        this.rightScale = this.height / 165;
+        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
+        this.ballinitpos = this.height * 0.95;
+        // Find random position for the flag up to 155 meters away from the stick man
+        // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
+        // this.flagX is set in meters and this.flagZ is set in pixels
+        this.flagX = Math.floor(Math.random() * 150) + 5;
+        this.flagZ = Math.floor(Math.random() * this.rightWidth);
+        // Same idea for tree
+        this.treeX = Math.floor(Math.random() * 150) + 5;
+        this.treeZ = Math.floor(Math.random() * this.rightWidth);
+        // Declare self variable to use in callback function below
+        let self = this;
         // Start running updates
         this.loop = setInterval(function() {
             self.update();
@@ -138,6 +150,60 @@ let game = {
     },
     getGroundHeight() {
         return this.height - this.groundHeight;
+    },
+    drawFlag(x, z) {
+        // Set flag height in meters
+        let height = this.scale * 3;
+        // Set flag pole width relative to height
+        let width = height / 50;
+        // Set radius of golf ball hole relative to height
+        let radius = height / 20;
+        // Set x and y coordinates of center of golf ball hole
+        let xh = this.scale * (-this.leftEdge + x);
+        let yh = this.getGroundHeight();
+        // Draw golf ball hole
+        this.leftCx.beginPath();
+        this.leftCx.ellipse(xh, yh, radius, radius, 0, Math.PI, 2 * Math.PI, 1);
+        this.leftCx.fillStyle = "black";
+        this.leftCx.fill();
+        // Set x and y coordinates for flag pole in left window
+        let xl = xh - width / 2;
+        let yl = yh - height;
+        // Draw flag in left window
+        this.leftCx.fillStyle = "grey";
+        this.leftCx.fillRect(xl, yl, width, height);
+        this.leftCx.beginPath();
+        this.leftCx.moveTo(xl, yl);
+        this.leftCx.lineTo(xl - height/2.5, yl + height/10);
+        this.leftCx.lineTo(xl, yl + height/5);
+        this.leftCx.fillStyle = "red";
+        this.leftCx.fill();
+        // Set flag height to 50 pixels (constant)
+        height = 50;
+        // Set x and y coordinates for flag pole in right window
+        let xr = z;
+        let yr = this.ballinitpos - x * this.rightScale - height + height / 5;
+        // Draw flag in right window
+        this.rightCx.fillStyle = "grey";
+        this.rightCx.fillRect(xr, yr, height/5, height);
+        this.rightCx.beginPath();
+        this.rightCx.moveTo(xr, yr);
+        this.rightCx.lineTo(xr - height/2, yr + height/5);
+        this.rightCx.lineTo(xr, yr + height/2.5);
+        this.rightCx.fillStyle = "red";
+        this.rightCx.fill();
+    },
+    drawTree(x, z) {
+        let height = this.scale * 6;
+        let width = this.scale * 4;
+        let yl = this.getGroundHeight() - height;
+        let xl = this.scale * (-this.leftEdge + x);
+        this.leftCx.drawImage(this.treeImage, xl, yl, width, height);
+        height = 60;  // height in pixels
+        width = 40;  // width in pixels
+        let yr = this.ballinitpos - x * this.rightScale - height;
+        let xr = z;
+        this.rightCx.drawImage(this.treeImage, xr, yr, width, height);
     },
     update: function() {
         // game.update runs each frame

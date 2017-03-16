@@ -21,7 +21,7 @@ game.render = function(dt) {
         // Draw the walls
         this.leftCx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
                              this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
-        this.rightCx.fillRect(0, this.height*0.8 - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
+        this.rightCx.fillRect(0, this.ballinitpos - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
     }
     if(!this.ball.moving) {
         // If we're awaiting input
@@ -35,17 +35,18 @@ game.render = function(dt) {
         this.leftCx.stroke();
         if(this.launchAngleSet) {
             this.rightCx.beginPath();
-            this.rightCx.moveTo(this.rightWidth/2, this.height*0.8);
-            this.rightCx.lineTo(this.rightWidth/2 + Math.sin(this.LAngle) * 200 * this.power, this.height*0.8 - Math.cos(this.LAngle) * 200 * this.power);
+            this.rightCx.moveTo(this.rightWidth/2, this.ballinitpos);
+            this.rightCx.lineTo(this.rightWidth/2 + Math.sin(this.LAngle) * 200 * this.power, this.ballinitpos - Math.cos(this.LAngle) * 200 * this.power);
             this.rightCx.stroke();
         }
     }
     // Draw the ball
-    // Commented line below is for discussion purposes - I'm on the fence about which of these to use
-    // this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - (this.ball.pos.y + this.ball.realRadius)*this.scale - this.ball.radius, this.ball.diameter, this.ball.diameter);
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
-
     // Draw line between corners of right canvas to demonstrate
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
-    this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.height*0.8 - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
+    this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
+    // Draw tree
+    this.drawTree(this.treeX, this.treeZ);
+    // Draw flag
+    this.drawFlag(this.flagX, this.flagZ);
 }
