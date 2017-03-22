@@ -2,10 +2,22 @@ game.render = function(dt) {
     // Clear foreground for redraw
     this.leftCx.clearRect(0, 0, this.leftWidth, this.height);
     this.rightCx.clearRect(0, 0, this.rightWidth, this.height);
-    let scale = this.leftWidth / (this.ball.pos.x - this.leftEdge + 2) / 1.1;
-    if(scale < this.scale) {
-        // If the scale is shrinking, don't change it.
-        this.scale = scale;
+    let leftEdge = this.ball.pos.x - 5.5 + 4.5*this.launchDir - 100 / this.scale;
+    if(leftEdge < this.leftEdge && (this.ball.moving || this.leftEdge === Infinity)) {
+        let width = this.leftWidth / this.scale + this.leftEdge - leftEdge;
+        if(this.leftEdge !== Infinity) {
+            this.scale = this.leftWidth / width;
+        }
+        this.leftEdge = leftEdge;
+    }
+    if(!this.lockScale || this.scale === Infinity) {
+        var scale = this.leftWidth / (this.ball.pos.x - this.leftEdge + 5.5 + 4.5*this.launchDir) / 1.1;
+        if(scale < this.scale && (this.ball.moving || this.scale === Infinity)) {
+            // If the scale is shrinking, don't change it.
+            this.scale = scale;
+        }
+    } else {
+        var scale = this.leftWidth / (this.ball.pos.x - leftEdge + 5.5 + 4.5*this.launchDir) / 1.1;
     }
     // Calculate left edge in pixels - for drawing purposes.
     let realLeftEdge = this.scale * this.leftEdge;
@@ -24,19 +36,32 @@ game.render = function(dt) {
         this.rightCx.fillRect(0, this.height*0.8 - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
     }
     if(!this.ball.moving) {
+        if(this.leftEdge !== leftEdge || this.scale !== scale) {
+            if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
+                this.leftEdge = leftEdge;
+                this.scale = scale;
+                this.lockScale = false;
+            }
+            this.leftEdge = (this.leftEdge + leftEdge * 2 * dt) / (1 + 2 * dt);
+            this.scale = (this.scale + scale * 2 * dt) / (1 + 2 * dt);
+        }
         // If we're awaiting input
         // Tell the user we're awaiting input
         this.leftCx.fillText("Press any key or tap screen", 20, 80);
         // Get ready to draw lines
         this.leftCx.beginPath();
-        this.leftCx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
-        this.leftCx.lineTo(-realLeftEdge + 400 * Math.cos(this.angle) * this.power, groundHeight - this.ball.radius - 400 * Math.sin(this.angle) * this.power);
+        let left = -realLeftEdge + this.ball.pos.x * this.scale;
+        let bot = groundHeight - this.ball.radius;
+        this.leftCx.moveTo(left, bot);
+        this.leftCx.lineTo(left + 400 * Math.cos(this.angle) * this.power * this.launchDir, bot - 400 * Math.sin(this.angle) * this.power);
         // Write the line to the screen
         this.leftCx.stroke();
         if(this.launchAngleSet) {
+            left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
+            bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
             this.rightCx.beginPath();
-            this.rightCx.moveTo(this.rightWidth/2, this.height*0.8);
-            this.rightCx.lineTo(this.rightWidth/2 + Math.sin(this.LAngle) * 200 * this.power, this.height*0.8 - Math.cos(this.LAngle) * 200 * this.power);
+            this.rightCx.moveTo(left, bot);
+            this.rightCx.lineTo(left + Math.sin(this.LAngle) * 200 * this.power, bot - Math.cos(this.LAngle) * 200 * this.power * this.launchDir);
             this.rightCx.stroke();
         }
     }

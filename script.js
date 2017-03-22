@@ -14,7 +14,7 @@ let game = {
         // Setting font for fillText
         this.bgCx = this.bg.getContext("2d");
         // this.leftEdge is the coordinate in meters of the left edge of the canvas
-        this.leftEdge = -0.9;
+        this.leftEdge = Infinity;
         // this.groundHeight is the height of the ground above the bottom of the canvas in pixels (the zero point of height in meters).
         this.groundHeight = 100;
         // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
@@ -26,11 +26,11 @@ let game = {
             self.windowResize();
         };
         // On key down or on click, run the key down / click handler. See game.onKeyDown()
-        window.onkeydown = function() {
-            self.onKeyDown();
+        window.onkeydown = function(event) {
+            self.onKeyDown(event.keyCode);
         };
-        window.onclick = function() {
-            self.onKeyDown();
+        window.onclick = function(event) {
+            self.onKeyDown(event.keyCode);
         };
 
         // Images in JS load asynchonously, so we give a callback that iincrements game.ready. Once that hits 2, we know that both images have been loaded.
@@ -99,11 +99,21 @@ let game = {
         this.bgCx.fillStyle = "black";
         this.bgCx.fillText("yards", 90, 30);
     },
-    onKeyDown: function() {
+    onKeyDown: function(keyCode) {
         if(this.ball.moving) {
             // If the ball is already moving, ignore imput
             return 0;
         }
+        if(keyCode === 37) {
+            this.launchDir = -1;
+            this.lockScale = true;
+            return 0;
+        } if (keyCode === 39) {
+            this.launchDir = 1;
+            this.lockScale = true;
+            return 0;
+        }
+
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
         if(!this.launchAngleSet) {
             this.launchAngleSet = true;
@@ -114,7 +124,19 @@ let game = {
             this.power = 0.2;
         } else {
             // See Ball.launch()
+            if(this.launchDir === -1) {
+                this.LAngle = Math.PI - this.LAngle;
+            }
+            this.lockScale = false;
             this.ball.launch(58 * Math.cos(this.angle) * this.power, this.LAngle, 58 * Math.sin(this.angle) * this.power, 0);
+            this.angle = 0.174;
+            // this.up keeps track of whether we're oscillating up or down
+            this.up = 1;
+            // Same as angle stuff
+            this.LAngle = 0;
+            this.power = 1;
+            this.launchAngleSet = false;
+            this.lateralAngleSet = false;
         }
     },
     enable: function() {
@@ -124,6 +146,7 @@ let game = {
         let self = this;
         // this.lastUpdate is used to calculate dt
         this.lastUpdate = Date.now();
+        this.launchDir = 1;
         // this.angle is used during oscillation to keep track of where it is while going up and down.
         this.angle = 0.174;
         // this.up keeps track of whether we're oscillating up or down
@@ -180,6 +203,6 @@ let game = {
                 }
             }
         }
-        this.render();
+        this.render(dt);
     },
 }
