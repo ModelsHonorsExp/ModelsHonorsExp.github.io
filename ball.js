@@ -26,7 +26,7 @@ game.ball = {
 
         let xSign = Math.sign(cosLat);
         let xIndex = (1 - xSign) / 2;
-        let xCurrent = xIndex * (game.walls.length - 1);
+        let xCurrent = xIndex * (game.tree.length - 1);
 
         while(this.divs === 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground
             // Net velocity magnitude
@@ -42,9 +42,9 @@ game.ball = {
             this.h[this.divs] = this.h[this.divs-1] + vY * this.dt;
             this.x[this.divs] = this.x[this.divs-1] + vLat * this.dt * cosLat;
             this.z[this.divs] = this.z[this.divs-1] + vLat * this.dt * sinLat;
-            if(game.walls[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.walls[xCurrent][xIndex] - this.realRadius)) {
-                if(this.h[this.divs] <= game.walls[xCurrent][2]) {
-                    this.x[this.divs] = game.walls[xCurrent][xIndex] - this.realRadius * xSign;
+            if(game.tree[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.tree[xCurrent][xIndex] - this.realRadius)) {
+                if(this.h[this.divs] <= game.tree[xCurrent][2]) {
+                    this.x[this.divs] = game.tree[xCurrent][xIndex] - this.realRadius * xSign;
                     cosLat = -cosLat;
                     xSign = -xSign;
                     xIndex = 1 - xIndex;

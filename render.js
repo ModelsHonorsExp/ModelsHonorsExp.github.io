@@ -17,12 +17,12 @@ game.render = function(dt) {
     let groundHeight = this.getGroundHeight();
     // Draw stick man with his "feet" a little behind the (0, 0) point.
     this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth, groundHeight - manHeight, manWidth, manHeight);
-    for(let i = 0; i < this.walls.length; i++) {
-        // Draw the walls
-        this.leftCx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
-                             this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
-        this.rightCx.fillRect(0, this.ballinitpos - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
-    }
+    // for(let i = 0; i < this.walls.length; i++) {
+    //     // Draw the walls
+    //     this.leftCx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
+    //                          this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
+    //     this.rightCx.fillRect(0, this.ballinitpos - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
+    // }
     if(!this.ball.moving) {
         // If we're awaiting input
         // Tell the user we're awaiting input

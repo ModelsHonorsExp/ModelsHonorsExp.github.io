@@ -15,8 +15,6 @@ let game = {
         this.leftEdge = -0.9;
         // this.groundHeight is the height of the ground above the bottom of the canvas in pixels (the zero point of height in meters)
         this.groundHeight = 100;
-        // Each array in this.walls is a wall that follows this structure: [left edge, right edge, top]
-        this.walls = [[60, 60.5, 8], [68, 78, 10]];
         // let self = this; declares the game object as a local variable so it can be used in callback functions, etc.
         let self = this;
         window.onresize = function() {
@@ -141,6 +139,8 @@ let game = {
         // Same idea for tree
         this.treeX = Math.floor(Math.random() * 150) + 5;
         this.treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
+
+        this.tree = [[this.treeX, this.treeX+4, 6]];
         // Declare self variable to use in callback function below
         let self = this;
         // Start running updates
@@ -247,7 +247,6 @@ let game = {
         this.render();
     },
     reset() {
-        console.log(this.flagZ);
         let self = this;
         setTimeout(function() {
             self.ball.moving = false;
@@ -257,11 +256,11 @@ let game = {
             self.flagZ -= self.ball.pos.z * self.rightScale;
             self.treeX -= self.ball.pos.x;
             self.treeZ -= self.ball.pos.z * self.rightScale;
-            console.log(self.flagZ);
             self.ball.pos.x = 0;
             self.ball.pos.z = 0;
             self.scale = self.leftWidth / (self.ball.pos.x - self.leftEdge + 2) / 1.1;
             self.power = 1;
+            self.tree = [[self.treeX, self.treeX + 4, 6]];
         }, 2000);
     }
 }
