@@ -16,7 +16,7 @@ game.render = function(dt) {
     let manWidth = manHeight / 3;
     let groundHeight = this.getGroundHeight();
     // Draw stick man with his "feet" a little behind the (0, 0) point.
-    this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth - 1, groundHeight - manHeight, manWidth, manHeight);
+    this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth, groundHeight - manHeight, manWidth, manHeight);
     for(let i = 0; i < this.walls.length; i++) {
         // Draw the walls
         this.leftCx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
@@ -27,11 +27,9 @@ game.render = function(dt) {
         // If we're awaiting input
         // Tell the user we're awaiting input
         this.leftCx.fillText("Press any key or tap screen", 20, 80);
-        // Get ready to draw lines
         this.leftCx.beginPath();
         this.leftCx.moveTo(-realLeftEdge, groundHeight - this.ball.radius);
         this.leftCx.lineTo(-realLeftEdge + 400 * Math.cos(this.angle) * this.power, groundHeight - this.ball.radius - 400 * Math.sin(this.angle) * this.power);
-        // Write the line to the screen
         this.leftCx.stroke();
         if(this.launchAngleSet) {
             this.rightCx.beginPath();
@@ -42,7 +40,6 @@ game.render = function(dt) {
     }
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
-    // Draw line between corners of right canvas to demonstrate
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
     this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
     // Draw tree

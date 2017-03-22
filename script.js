@@ -30,7 +30,7 @@ let game = {
         window.onclick = function() {
             self.onKeyDown();
         };
-        // Images in JS load asynchonously, so we give a callback that iincrements game.ready. Once that hits 2, we know that both images have been loaded.
+        // Images in JS load asynchonously, so we give a callback that increments game.ready
         this.manImage = new Image();
         this.manImage.onload = function() {
             self.ready++;
@@ -132,15 +132,15 @@ let game = {
         // Like this.scale but for the right canvas, which is now equivalent to 165 meters
         this.rightScale = this.height / 165;
         // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.95;
+        this.ballinitpos = this.height * 0.975;
         // Find random position for the flag up to 155 meters away from the stick man
         // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
         // this.flagX is set in meters and this.flagZ is set in pixels
         this.flagX = Math.floor(Math.random() * 150) + 5;
-        this.flagZ = Math.floor(Math.random() * this.rightWidth);
+        this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
         // Same idea for tree
         this.treeX = Math.floor(Math.random() * 150) + 5;
-        this.treeZ = Math.floor(Math.random() * this.rightWidth);
+        this.treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
         // Declare self variable to use in callback function below
         let self = this;
         // Start running updates
@@ -181,7 +181,7 @@ let game = {
         // Set flag height to 50 pixels (constant)
         height = 50;
         // Set x and y coordinates for flag pole in right window
-        let xr = z;
+        let xr = this.rightWidth / 2 + z;
         let yr = this.ballinitpos - x * this.rightScale - height + height / 5;
         // Draw flag in right window
         this.rightCx.fillStyle = "grey";
@@ -194,15 +194,15 @@ let game = {
         this.rightCx.fill();
     },
     drawTree(x, z) {
-        let height = this.scale * 6;
-        let width = this.scale * 4;
+        let height = this.scale * 6; // 6 meters
+        let width = this.scale * 4; // 4 meters
         let yl = this.getGroundHeight() - height;
         let xl = this.scale * (-this.leftEdge + x);
         this.leftCx.drawImage(this.treeImage, xl, yl, width, height);
         height = 60;  // height in pixels
         width = 40;  // width in pixels
         let yr = this.ballinitpos - x * this.rightScale - height;
-        let xr = z;
+        let xr = this.rightWidth / 2 + z;
         this.rightCx.drawImage(this.treeImage, xr, yr, width, height);
     },
     update: function() {
@@ -213,10 +213,8 @@ let game = {
         this.lastUpdate = now;
         // Let the ball recalculate its position
         this.ball.update(dt);
-        // Set the zoom so it goes from the left edge to 10 meters past the position of the ball.
         if(!this.ball.moving) {
             // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
-            // If we're awaiting input
             if(!this.launchAngleSet) {
                 // If launch angle isn't finalized
                 // Oscillate between ~10 and ~20 degrees
@@ -248,4 +246,22 @@ let game = {
         }
         this.render();
     },
+    reset() {
+        console.log(this.flagZ);
+        let self = this;
+        setTimeout(function() {
+            self.ball.moving = false;
+            self.launchAngleSet = false;
+            self.lateralAngleSet = false;
+            self.flagX -= self.ball.pos.x;
+            self.flagZ -= self.ball.pos.z * self.rightScale;
+            self.treeX -= self.ball.pos.x;
+            self.treeZ -= self.ball.pos.z * self.rightScale;
+            console.log(self.flagZ);
+            self.ball.pos.x = 0;
+            self.ball.pos.z = 0;
+            self.scale = self.leftWidth / (self.ball.pos.x - self.leftEdge + 2) / 1.1;
+            self.power = 1;
+        }, 2000);
+    }
 }
