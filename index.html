@@ -3,7 +3,9 @@
     <head>
         <title>Golf</title>
         <link rel="stylesheet" href="stylesheet.css">
+        <link rel="stylesheet" href="dropdown.css">
         <script src="script.js"></script>
+        <script src="dropdown.js"></script>
         <script src="ball.js"></script>
         <script src="render.js"></script>
     </head>
@@ -11,6 +13,28 @@
         <canvas id="bg"></canvas>
         <canvas id="left"></canvas>
         <canvas id="right"></canvas>
+        <h2>Club Selection</h2>
+        <p>Click on the button to open the dropdown menu.</p>
+
+        <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn">Select</button>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="#1">Driver</a>
+                <a href="#2">Iron</a>
+                <a href="#3">Wedge</a>
+                <a href="#4">Putter</a>
+                <!--<a href="#5">5</a>
+                <a href="#6">6</a>
+                <a href="#7">7</a>
+                <a href="#8">8</a>
+                <a href="#9">9</a>
+                <a href="#10">10</a>
+                <a href="#11">11</a>
+                <a href="#12">12</a>
+                <a href="#13">13</a>
+                <a href="#14">14</a>-->
+            </div>
+        </div>
         <script>game.start();</script>
     </body>
 </html>

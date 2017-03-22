@@ -30,6 +30,9 @@ let game = {
             self.onKeyDown(event.keyCode);
         };
         window.onclick = function(event) {
+            if(closeDropdown(event)) { // returns true if the click did something with the dropdown
+                return 0;
+            }
             self.onKeyDown(event.keyCode);
         };
 
@@ -57,7 +60,7 @@ let game = {
         this.width = window.innerWidth;
         this.leftWidth = this.width * 3 / 5;
         this.rightWidth = this.width - this.leftWidth;
-        this.height = window.innerHeight;
+        this.height = window.innerHeight - 106;
         // Set canvases to fill page
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
