@@ -68,7 +68,7 @@ game.ball = {
                     this.z[this.divs] = game.tree_zSorted[zCurrent][zIndex] - this.realRadius * zSign;
                     sinLat = -sinLat;
                     zSign = -zSign;
-                    zIndex = 1 - zIndex;
+                    zIndex = (1 - zSign) / 2 + 3;
                 }
                 zCurrent += zSign;
             }
