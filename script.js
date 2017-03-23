@@ -269,7 +269,7 @@ let game = {
         for(let i = 0; i < this.tree_xSorted.length; i++) {
             let tree = this.tree_xSorted[i];
             let width = tree[1] - tree[0]; // 4 meters
-            let yl = this.getGroundHeight() - tree[2] * this.scale;
+            let yl = this.getGroundHeight() - tree[2] * this.scale + 1;
             let xl = this.scale * (-this.leftEdge + tree[0]);
             this.leftCx.drawImage(this.treeImage, xl, yl, width * this.scale, tree[2] * this.scale);
             let height = width;  // height meters
