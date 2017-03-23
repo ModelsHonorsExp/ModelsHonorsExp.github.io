@@ -198,10 +198,18 @@ let game = {
         this.flagX = Math.floor(Math.random() * 150) + 5;
         this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
         // Same idea for tree
-        this.treeX = Math.floor(Math.random() * 150) + 5;
-        this.treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
+        //this.treeX = Math.floor(Math.random() * 150) + 5;
+        //this.treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
 
-        this.tree = [[this.treeX, this.treeX+4, 6]];
+        this.tree = [];
+        for(let i = 0; i < 3; i++) {
+            let treeX = Math.floor(Math.random() * 150) + 5;
+            let treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
+            this.tree[i] = [treeX, treeX+4, 6, treeZ, treeZ+4];
+        }
+        this.tree.sort(function(a, b) {
+            return a[0] - b[0];
+        });
         // Declare self variable to use in callback function below
         let self = this;
         // Start running updates

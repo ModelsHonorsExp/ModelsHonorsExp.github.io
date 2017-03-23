@@ -54,8 +54,10 @@ game.render = function(dt) {
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
     this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
-    // Draw tree
-    this.drawTree(this.treeX, this.treeZ);
+    // Draw trees
+    for(let i = 0; i < this.tree.length; i++) {
+        this.drawTree(this.tree[i][0], this.tree[i][3]);
+    }
     // Draw flag
     this.drawFlag(this.flagX, this.flagZ);
     if(!this.ball.moving && (this.leftEdge !== leftEdge || this.scale !== scale)) {
