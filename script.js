@@ -125,11 +125,11 @@ let game = {
             // If the ball is already moving, ignore imput
             return 0;
         }
-        if(keyCode === 37) {
+        if(keyCode === 40 || keyCode === 37) {
             this.launchDir = -1;
             this.lockScale = true;
             return 0;
-        } if (keyCode === 39) {
+        } if (keyCode === 38 || keyCode === 39) {
             this.launchDir = 1;
             this.lockScale = true;
             return 0;
