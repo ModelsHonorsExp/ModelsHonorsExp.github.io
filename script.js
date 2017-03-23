@@ -54,6 +54,27 @@ let game = {
                 self.enable();
             }
         }, 0);
+        this.clubNames = ["Driver", "Iron", "Wedge", "Putter"];
+        let dropdownBox = document.querySelector(".dropdown-content");
+        for(let i = 0; i < this.clubNames.length; i++) {
+            let button = document.createElement("button");
+            button.innerHTML = this.clubNames[i];
+            button.onclick = function() {
+                self.setClub(i);
+            }
+            dropdownBox.appendChild(button);
+        }
+        /* for loop adds this to HTML:
+
+        <button onclick="game.setClub(0);">Driver</button>
+        <button onclick="game.setClub(1);">Iron</button>
+        <button onclick="game.setClub(2);">Wedge</button>
+        <button onclick="game.setClub(3);">Putter</button>
+
+        */
+
+        this.dropdownButton = document.querySelector(".dropbtn");
+        this.setClub(0);
     },
     windowResize: function() {
         // Dimensions in pixels
@@ -126,7 +147,21 @@ let game = {
                 this.LAngle = Math.PI - this.LAngle;
             }
             this.lockScale = false;
-            this.ball.launch(58 * Math.cos(this.angle) * this.power, this.LAngle, 58 * Math.sin(this.angle) * this.power, 0);
+            switch(this.clubNum) {
+                case 0:
+                    var max = 58;
+                    break;
+                case 1:
+                    var max = 30;
+                    break;
+                case 2:
+                    var max = 20;
+                    break;
+                default:
+                    var max = 10;
+                    break;
+            }
+            this.ball.launch(max * Math.cos(this.angle) * this.power, this.LAngle, max * Math.sin(this.angle) * this.power, 0);
             this.angle = 0.174;
             // this.up keeps track of whether we're oscillating up or down
             this.up = 1;
@@ -272,4 +307,8 @@ let game = {
         }
         this.render(dt);
     },
+    setClub: function(clubNum) {
+        this.clubNum = clubNum;
+        this.dropdownButton.innerHTML = this.clubNames[clubNum];
+    }
 }
