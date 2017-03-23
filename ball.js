@@ -77,7 +77,6 @@ game.ball = {
             // Put us on the ground on the last frame
             this.pos.y = 0;
             index = this.divs - 1;
-            game.reset();
             return 0;
         }
         this.pos.x = this.x[index];

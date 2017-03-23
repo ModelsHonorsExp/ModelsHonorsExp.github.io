@@ -246,21 +246,4 @@ let game = {
         }
         this.render();
     },
-    reset() {
-        let self = this;
-        setTimeout(function() {
-            self.ball.moving = false;
-            self.launchAngleSet = false;
-            self.lateralAngleSet = false;
-            self.flagX -= self.ball.pos.x;
-            self.flagZ -= self.ball.pos.z * self.rightScale;
-            self.treeX -= self.ball.pos.x;
-            self.treeZ -= self.ball.pos.z * self.rightScale;
-            self.ball.pos.x = 0;
-            self.ball.pos.z = 0;
-            self.scale = self.leftWidth / (self.ball.pos.x - self.leftEdge + 2) / 1.1;
-            self.power = 1;
-            self.tree = [[self.treeX, self.treeX + 4, 6]];
-        }, 2000);
-    }
 }
