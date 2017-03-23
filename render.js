@@ -28,13 +28,7 @@ game.render = function(dt) {
     let manWidth = manHeight / 3;
     let groundHeight = this.getGroundHeight();
     // Draw stick man with his "feet" a little behind the (0, 0) point.
-    this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth - 1, groundHeight - manHeight, manWidth, manHeight);
-    for(let i = 0; i < this.walls.length; i++) {
-        // Draw the walls
-        this.leftCx.fillRect(-realLeftEdge + this.scale * this.walls[i][0], groundHeight - this.scale * this.walls[i][2],
-                             this.scale * (this.walls[i][1] - this.walls[i][0]), this.scale * this.walls[i][2]);
-        this.rightCx.fillRect(0, this.height*0.8 - this.walls[i][0]*this.rightScale, this.rightWidth, (this.walls[i][0] - this.walls[i][1])*this.rightScale);
-    }
+    this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth, groundHeight - manHeight, manWidth, manHeight);
     if(!this.ball.moving) {
         if(this.leftEdge !== leftEdge || this.scale !== scale) {
             if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
@@ -48,7 +42,6 @@ game.render = function(dt) {
         // If we're awaiting input
         // Tell the user we're awaiting input
         this.leftCx.fillText("Press any key or tap screen", 20, 80);
-        // Get ready to draw lines
         this.leftCx.beginPath();
         let left = -realLeftEdge + this.ball.pos.x * this.scale;
         let bot = groundHeight - this.ball.radius;
@@ -58,7 +51,8 @@ game.render = function(dt) {
         this.leftCx.stroke();
         if(this.launchAngleSet) {
             left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
-            bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
+            //bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
+            bot = this.ballinitpos - this.ball.pos.x * this.rightScale;
             this.rightCx.beginPath();
             this.rightCx.moveTo(left, bot);
             this.rightCx.lineTo(left + Math.sin(this.LAngle) * 200 * this.power, bot - Math.cos(this.LAngle) * 200 * this.power * this.launchDir);
@@ -66,11 +60,11 @@ game.render = function(dt) {
         }
     }
     // Draw the ball
-    // Commented line below is for discussion purposes - I'm on the fence about which of these to use
-    // this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - (this.ball.pos.y + this.ball.realRadius)*this.scale - this.ball.radius, this.ball.diameter, this.ball.diameter);
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
-
-    // Draw line between corners of right canvas to demonstrate
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
-    this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.height*0.8 - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
+    this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
+    // Draw tree
+    this.drawTree(this.treeX, this.treeZ);
+    // Draw flag
+    this.drawFlag(this.flagX, this.flagZ);
 }
