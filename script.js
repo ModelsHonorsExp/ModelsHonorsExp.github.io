@@ -117,6 +117,8 @@ let game = {
         // Putting this on the background means we only have to redraw the number every frame, plus keeps it in a consistent location
         this.bgCx.fillStyle = "black";
         this.bgCx.fillText("yards", 90, 30);
+        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
+        this.ballinitpos = this.height * 0.975;
     },
     onKeyDown: function(keyCode) {
         if(this.ball.moving) {
@@ -190,8 +192,6 @@ let game = {
         this.scale = Infinity;
         // Like this.scale but for the right canvas, which is now equivalent to 165 meters
         this.rightScale = this.height / 165;
-        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.975;
         // Find random position for the flag up to 155 meters away from the stick man
         // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
         // this.flagX is set in meters and this.flagZ is set in pixels
