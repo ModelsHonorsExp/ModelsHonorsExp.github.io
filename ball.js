@@ -26,9 +26,16 @@ game.ball = {
 
         let xSign = Math.sign(cosLat);
         let xIndex = (1 - xSign) / 2;
-        let xCurrent = xIndex * (game.tree.length - 1);
-        while(game.tree[xCurrent] !== undefined && xSign * this.pos.x > xSign * game.tree[xCurrent][xIndex]) {
+        let xCurrent = xIndex * (game.tree_xSorted.length - 1);
+        while(game.tree_xSorted[xCurrent] !== undefined && xSign * this.pos.x > xSign * game.tree_xSorted[xCurrent][xIndex]) {
             xCurrent += xSign;
+        }
+
+        let zSign = Math.sign(sinLat);
+        let zIndex = (1 - zSign) / 2 + 3;
+        let zCurrent = (zIndex - 3) * (game.tree_zSorted.length - 1);
+        while(game.tree_zSorted[zCurrent] !== undefined && zSign * this.pos.z > zSign * game.tree_xSorted[zCurrent][zIndex]) {
+            zCurrent += zSign;
         }
 
         while(this.divs === 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground
@@ -45,15 +52,27 @@ game.ball = {
             this.h[this.divs] = this.h[this.divs-1] + vY * this.dt;
             this.x[this.divs] = this.x[this.divs-1] + vLat * this.dt * cosLat;
             this.z[this.divs] = this.z[this.divs-1] + vLat * this.dt * sinLat;
-            if(game.tree[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.tree[xCurrent][xIndex] - this.realRadius)) {
-                if(this.h[this.divs] <= game.tree[xCurrent][2]) {
-                    this.x[this.divs] = game.tree[xCurrent][xIndex] - this.realRadius * xSign;
+
+            if(game.tree_xSorted[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.tree_xSorted[xCurrent][xIndex] - this.realRadius)) {
+                if(this.h[this.divs] <= game.tree_xSorted[xCurrent][2] && this.z[this.divs] >= game.tree_xSorted[xCurrent][3] && this.z[this.divs] <= game.tree_xSorted[xCurrent][4]) {
+                    this.x[this.divs] = game.tree_xSorted[xCurrent][xIndex] - this.realRadius * xSign;
                     cosLat = -cosLat;
                     xSign = -xSign;
                     xIndex = 1 - xIndex;
                 }
                 xCurrent += xSign;
             }
+
+            if(game.tree_zSorted[zCurrent] !== undefined && zSign * this.z[this.divs] >= zSign * (game.tree_zSorted[zCurrent][zIndex] - this.realRadius)) {
+                if(this.h[this.divs] <= game.tree_zSorted[zCurrent][2] && this.x[this.divs] >= game.tree_zSorted[zCurrent][0] && this.x[this.divs] <= game.tree_zSorted[zCurrent][1]) {
+                    this.z[this.divs] = game.tree_zSorted[zCurrent][zIndex] - this.realRadius * zSign;
+                    sinLat = -sinLat;
+                    zSign = -zSign;
+                    zIndex = 1 - zIndex;
+                }
+                zCurrent += zSign;
+            }
+
             // Increase iterative variable
             this.divs++;
         }

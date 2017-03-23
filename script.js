@@ -197,18 +197,21 @@ let game = {
         // this.flagX is set in meters and this.flagZ is set in pixels
         this.flagX = Math.floor(Math.random() * 150) + 5;
         this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
-        // Same idea for tree
-        //this.treeX = Math.floor(Math.random() * 150) + 5;
-        //this.treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
 
-        this.tree = [];
+        this.tree_xSorted = [];
+        this.tree_zSorted = [];
         for(let i = 0; i < 3; i++) {
             let treeX = Math.floor(Math.random() * 150) + 5;
-            let treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
-            this.tree[i] = [treeX, treeX+4, 6, treeZ, treeZ+4];
+            let treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale;
+            // [front, back, top, left, right]
+            this.tree_xSorted[i] = [treeX, treeX+7, 10, treeZ, treeZ+7];
+            this.tree_zSorted[i] = this.tree_xSorted[i];
         }
-        this.tree.sort(function(a, b) {
+        this.tree_xSorted.sort(function(a, b) {
             return a[0] - b[0];
+        });
+        this.tree_zSorted.sort(function(a, b) {
+            return a[3] - b[3];
         });
         // Declare self variable to use in callback function below
         let self = this;
@@ -262,17 +265,19 @@ let game = {
         this.rightCx.fillStyle = "red";
         this.rightCx.fill();
     },
-    drawTree(x, z) {
-        let height = this.scale * 6; // 6 meters
-        let width = this.scale * 4; // 4 meters
-        let yl = this.getGroundHeight() - height;
-        let xl = this.scale * (-this.leftEdge + x);
-        this.leftCx.drawImage(this.treeImage, xl, yl, width, height);
-        height = 60;  // height in pixels
-        width = 40;  // width in pixels
-        let yr = this.ballinitpos - x * this.rightScale - height;
-        let xr = this.rightWidth / 2 + z;
-        this.rightCx.drawImage(this.treeImage, xr, yr, width, height);
+    drawTrees() {
+        for(let i = 0; i < this.tree_xSorted.length; i++) {
+            let tree = this.tree_xSorted[i];
+            let width = tree[1] - tree[0]; // 4 meters
+            let yl = this.getGroundHeight() - tree[2] * this.scale;
+            let xl = this.scale * (-this.leftEdge + tree[0]);
+            this.leftCx.drawImage(this.treeImage, xl, yl, width * this.scale, tree[2] * this.scale);
+            let height = width;  // height meters
+            width = tree[4] - tree[3];  // width in meters
+            let yr = this.ballinitpos - tree[0] * this.rightScale - height * this.rightScale;
+            let xr = this.rightWidth / 2 + tree[3] * this.rightScale;
+            this.rightCx.drawImage(this.treeImage, xr, yr, width * this.rightScale, height * this.rightScale);
+        }
     },
     update: function() {
         // game.update runs each frame
