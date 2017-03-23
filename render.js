@@ -29,6 +29,8 @@ game.render = function(dt) {
     let groundHeight = this.getGroundHeight();
     // Draw stick man with his "feet" a little behind the (0, 0) point.
     this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth, groundHeight - manHeight, manWidth, manHeight);
+    // Draw the ball
+    this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     if(!this.ball.moving) {
         if(this.leftEdge !== leftEdge || this.scale !== scale) {
             if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
@@ -59,8 +61,6 @@ game.render = function(dt) {
             this.rightCx.stroke();
         }
     }
-    // Draw the ball
-    this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
     this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
     // Draw tree
