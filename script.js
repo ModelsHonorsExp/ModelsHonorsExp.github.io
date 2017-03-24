@@ -125,15 +125,6 @@ let game = {
             // If the ball is already moving, ignore imput
             return 0;
         }
-        if(keyCode === 40 || keyCode === 37) {
-            this.launchDir = -1;
-            this.lockScale = true;
-            return 0;
-        } if (keyCode === 38 || keyCode === 39) {
-            this.launchDir = 1;
-            this.lockScale = true;
-            return 0;
-        }
 
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
         if(!this.launchAngleSet) {
@@ -141,13 +132,12 @@ let game = {
             this.up = 1;
         } else if(!this.lateralAngleSet) {
             this.lateralAngleSet = true;
+            this.lockScale = true;
+            this.launchDir = Math.sign(Math.cos(this.LAngle));
             this.up = 1;
             this.power = 0.2;
         } else {
             // See Ball.launch()
-            if(this.launchDir === -1) {
-                this.LAngle = Math.PI - this.LAngle;
-            }
             this.lockScale = false;
             switch(this.clubNum) {
                 case 0:
@@ -163,7 +153,11 @@ let game = {
                     var max = 10;
                     break;
             }
-            this.ball.launch(max * Math.cos(this.angle) * this.power, this.LAngle, max * Math.sin(this.angle) * this.power, 0);
+            let latvel = max * Math.cos(this.angle) * this.power;
+            let vertvel = max * Math.sin(this.angle) * this.power;
+            console.log("Stroke " + this.ball.stroke + ":\nStarting position in m = (" + this.ball.pos.x + ", " + this.ball.pos.y + ", " + this.ball.pos.z + ")\nLateral velocity = " + latvel
+                + " m/s\nLateral angle = " + this.LAngle + " rad\nVertical velocity = " + vertvel + " m/s\nSpin = 0 Hz");
+            this.ball.launch(latvel, this.LAngle, vertvel, 0);
             this.angle = 0.174;
             // this.up keeps track of whether we're oscillating up or down
             this.up = 1;
@@ -179,9 +173,9 @@ let game = {
         this.windowResize();
         // this.lastUpdate is used to calculate dt
         this.lastUpdate = Date.now();
-        this.launchDir = 1;
         // this.angle is used during oscillation to keep track of where it is while going up and down.
         this.angle = 0.174;
+        this.launchDir = 1;
         // this.up keeps track of whether we're oscillating up or down
         this.up = 1;
         // Same as angle stuff
@@ -202,9 +196,10 @@ let game = {
         this.tree_zSorted = [];
         for(let i = 0; i < 3; i++) {
             let treeX = Math.floor(Math.random() * 150) + 5;
-            let treeZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale;
+            let treeZ = Math.floor((Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale);
             // [front, back, top, left, right]
             this.tree_xSorted[i] = [treeX, treeX+7, 10, treeZ, treeZ+7];
+            console.log("Tree:\nx = " + treeX + " through " + this.tree_xSorted[i][1] +"\nz = " + treeZ + " through " + this.tree_xSorted[i][4]);
             this.tree_zSorted[i] = this.tree_xSorted[i];
         }
         this.tree_xSorted.sort(function(a, b) {
@@ -291,6 +286,7 @@ let game = {
             // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
             if(!this.launchAngleSet) {
                 // If launch angle isn't finalized
+                this.launchDir = 1;
                 // Oscillate between ~10 and ~20 degrees
                 // max angle: 0.348 rad, min angle: 0.174 rad, middle: 0.261 rad, range: 0.174 rad
                 this.angle += this.up * 0.524 * dt;
@@ -302,8 +298,9 @@ let game = {
                 // If lateral angle isn't finalized
                 // Oscillate between ~-40 and ~40 degrees
                 // max angle: 0.7 rad, min angle: -0.7 rad, middle: 0 rad, range: 1.4 rad
-                this.LAngle += this.up * 2 * dt;
-                if(Math.abs(this.LAngle) > 0.7) {
+                let first = (this.ball.stroke === 1);
+                this.LAngle += this.up * (2 + !first) * dt;
+                if(first && Math.abs(this.LAngle) > 0.7) {
                     this.LAngle = this.up * 0.7;
                     this.up = -this.up;
                 }

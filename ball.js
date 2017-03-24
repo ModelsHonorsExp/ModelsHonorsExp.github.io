@@ -1,4 +1,5 @@
 game.ball = {
+    stroke: 1,
     // Since the math for the X and Z directions is the same, throughout this object, "R" is used as a stand-in for X or Z when it can be specified by the caller of the function/property
     launch: function(v0lat, angleLat, v0y, spin) {
         this.angleLat = angleLat;
@@ -100,6 +101,7 @@ game.ball = {
             this.pos.y = 0;
             index = this.divs - 1;
             this.moving = false;
+            this.stroke++;
         }
         this.pos.x = this.x[index];
         this.pos.z = this.z[index];
