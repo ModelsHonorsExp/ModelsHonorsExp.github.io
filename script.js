@@ -1,5 +1,5 @@
 let game = {
-    ready: 0,
+    ready: 0, confettis: [],
     start: function() {
         // There are three canvases - the foreground (this.leftCanvas and this.rightCanvas) and background (this.bg)
         // The foreground gets updated every frame, this.bg stays as long as the window isn't resized
@@ -124,6 +124,16 @@ let game = {
         if(this.ball.moving) {
             // If the ball is already moving, ignore imput
             return 0;
+        }
+
+        if(keyCode === 67) {
+            Confetti.prototype.posx = this.leftWidth / 2;
+            Confetti.prototype.bottomBound = this.height;
+            this.colors = ["#3366ff", "#ff66ff", "#ff6600", "#ffccff", "#66ff66"];
+            let self = this;
+            this.confettiLoop = setInterval(function() {
+                self.poof();
+            }, 2000);
         }
 
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
@@ -316,9 +326,21 @@ let game = {
             }
         }
         this.render(dt);
+        let leftCx = this.leftCx;
+        this.confettis.map(function(confetti) {
+            let drawPos = confetti.update(dt);
+            if(drawPos) {
+                leftCx.drawImage(confetti.getFrame(), drawPos[0], drawPos[1]);
+            }
+        });
     },
     setClub: function(clubNum) {
         this.clubNum = clubNum;
         this.dropdownButton.innerHTML = this.clubNames[clubNum];
-    }
+    },
+    poof: function() {
+        for(let i = 0; i < 150; i++) {
+            new Confetti(this.colors[Math.floor(Math.random() * this.colors.length)]);
+        }
+    },
 }
