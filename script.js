@@ -119,6 +119,8 @@ let game = {
         this.bgCx.fillText("yards", 90, 30);
         // Set initial position of the ball in the right canvas - 5 meters from bottom of window
         this.ballinitpos = this.height * 0.975;
+        Confetti.prototype.posx = this.leftWidth / 2;
+        Confetti.prototype.bottomBound = this.height;
     },
     onKeyDown: function(keyCode) {
         if(this.ball.moving) {
@@ -127,8 +129,6 @@ let game = {
         }
 
         if(keyCode === 67) {
-            Confetti.prototype.posx = this.leftWidth / 2;
-            Confetti.prototype.bottomBound = this.height;
             this.colors = ["#3366ff", "#ff66ff", "#ff6600", "#ffccff", "#66ff66"];
             let self = this;
             this.confettiLoop = setInterval(function() {
