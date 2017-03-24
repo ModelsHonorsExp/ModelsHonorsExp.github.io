@@ -134,6 +134,7 @@ let game = {
             this.confettiLoop = setInterval(function() {
                 self.poof();
             }, 2000);
+            return 0;
         }
 
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
