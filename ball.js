@@ -35,7 +35,7 @@ game.ball = {
         let zSign = Math.sign(sinLat);
         let zIndex = (1 - zSign) / 2 + 3;
         let zCurrent = (zIndex - 3) * (game.tree_zSorted.length - 1);
-        while(game.tree_zSorted[zCurrent] !== undefined && zSign * this.pos.z > zSign * game.tree_xSorted[zCurrent][zIndex]) {
+        while(game.tree_zSorted[zCurrent] !== undefined && zSign * this.pos.z > zSign * game.tree_zSorted[zCurrent][zIndex]) {
             zCurrent += zSign;
         }
 
