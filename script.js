@@ -28,12 +28,11 @@ let game = {
         window.onkeyup = function(event) {
             self.onKeyUp(event.keyCode);
         };
-        window.onclick = function(event) {
-            if(closeDropdown(event)) { // returns true if the click did something with the dropdown
-                return 0;
-            }
+        let onclick = function(event) {
             self.onKeyDown(-1);
         };
+        this.leftCanvas.onclick = onclick;
+        this.rightCanvas.onclick = onclick;
         // Images in JS load asynchonously, so we give a callback that increments game.ready
         this.manImage = new Image();
         this.manImage.onload = function() {
@@ -167,7 +166,6 @@ let game = {
             // this.up keeps track of whether we're oscillating up or down
             this.up = 1;
             // Same as angle stuff
-            this.LAngle = 0;
             this.power = 1;
             this.launchAngleSet = false;
         }
@@ -287,6 +285,10 @@ let game = {
             this.rightCx.drawImage(this.treeImage, xr, yr, width * this.rightScale, height * this.rightScale);
         }
     },
+    setLaunchDir: function() {
+        this.launchDir = Math.sign(Math.cos(this.LAngle));
+        this.lockScale = true;
+    },
     update: function() {
         // game.update runs each frame
         // Calculate dt by subtracting the time of the last update to now
@@ -299,12 +301,12 @@ let game = {
             // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
             if(this.leftKeyDown) {
                 this.LAngle -= 2*dt;
+                this.setLaunchDir();
             } if(this.rightKeyDown) {
                 this.LAngle += 2*dt;
+                this.setLaunchDir();
             }
             if(!this.launchAngleSet) {
-                // If launch angle isn't finalized
-                this.launchDir = 1;
                 // Oscillate between ~10 and ~20 degrees
                 // max angle: 0.348 rad, min angle: 0.174 rad, middle: 0.261 rad, range: 0.174 rad
                 this.angle += this.up * 0.524 * dt;

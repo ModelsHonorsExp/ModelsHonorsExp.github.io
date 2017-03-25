@@ -10,18 +10,20 @@
         <script src="render.js"></script>
     </head>
     <body>
+        <h2>Club Selection</h2>
+        <p>Click on the button to open the dropdown menu.</p>
         <canvas id="bg"></canvas>
         <canvas id="left"></canvas>
         <canvas id="right"></canvas>
-        <h2>Club Selection</h2>
-        <p>Click on the button to open the dropdown menu.</p>
-
         <div class="dropdown">
         <button onclick="myFunction()" class="dropbtn">Select</button>
             <div id="myDropdown" class="dropdown-content">
                 <!-- Buttons are dynamically generated -->
             </div>
         </div>
+        <!-- TODO: make these work with touch -->
+        <button class="LR" onmousedown="game.onKeyDown(37);" onmouseup="game.onKeyUp(37);">Turn counterclockwise</button>
+        <button class="LR" onmousedown="game.onKeyDown(39);" onmouseup="game.onKeyUp(39);">Turn clockwise</button>
         <script>game.start();</script>
     </body>
 </html>

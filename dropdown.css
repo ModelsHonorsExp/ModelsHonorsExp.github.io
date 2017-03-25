@@ -1,4 +1,4 @@
-.dropbtn {
+.dropbtn, .LR {
     background-color: #4CAF50;
     color: white;
     padding: 16px;
@@ -7,7 +7,7 @@
     cursor: pointer;
 }
 
-.dropbtn:hover, .dropbtn:focus {
+.dropbtn:hover, .dropbtn:focus, .LR:hover, .LR:focus {
     background-color: #3e8e41;
 }
 
