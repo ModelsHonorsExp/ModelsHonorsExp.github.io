@@ -40,15 +40,13 @@ game.render = function(dt) {
         this.leftCx.lineTo(left + 400 * Math.cos(this.angle) * Math.cos(this.LAngle) * this.power, bot - 400 * Math.sin(this.angle) * this.power);
         // Write the line to the screen
         this.leftCx.stroke();
-        if(this.launchAngleSet) {
-            left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
-            //bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
-            bot = this.ballinitpos - this.ball.pos.x * this.rightScale;
-            this.rightCx.beginPath();
-            this.rightCx.moveTo(left, bot);
-            this.rightCx.lineTo(left + Math.sin(this.LAngle) * 200 * this.power, bot - Math.cos(this.LAngle) * 200 * this.power);
-            this.rightCx.stroke();
-        }
+        left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
+        //bot = this.height * 0.8 - this.ball.pos.x * this.rightScale;
+        bot = this.ballinitpos - this.ball.pos.x * this.rightScale;
+        this.rightCx.beginPath();
+        this.rightCx.moveTo(left, bot);
+        this.rightCx.lineTo(left + Math.sin(this.LAngle) * Math.cos(this.angle) * 200 * this.power, bot - Math.cos(this.LAngle) * Math.cos(this.angle) * 200 * this.power);
+        this.rightCx.stroke();
     }
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
