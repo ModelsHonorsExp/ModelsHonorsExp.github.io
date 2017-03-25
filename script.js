@@ -25,11 +25,14 @@ let game = {
         window.onkeydown = function(event) {
             self.onKeyDown(event.keyCode);
         };
+        window.onkeyup = function(event) {
+            self.onKeyUp(event.keyCode);
+        };
         window.onclick = function(event) {
             if(closeDropdown(event)) { // returns true if the click did something with the dropdown
                 return 0;
             }
-            self.onKeyDown(event.keyCode);
+            self.onKeyDown(-1);
         };
         // Images in JS load asynchonously, so we give a callback that increments game.ready
         this.manImage = new Image();
@@ -126,16 +129,18 @@ let game = {
             return 0;
         }
 
+        if(keyCode === 37) {
+            this.leftKeyDown = true;
+            return 0;
+        } if(keyCode === 39) {
+            this.rightKeyDown = true;
+            return 0;
+        }
+
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
         if(!this.launchAngleSet) {
             this.launchAngleSet = true;
             this.up = 1;
-        } else if(!this.lateralAngleSet) {
-            this.lateralAngleSet = true;
-            this.lockScale = true;
-            this.launchDir = Math.sign(Math.cos(this.LAngle));
-            this.up = 1;
-            this.power = 0.2;
         } else {
             // See Ball.launch()
             this.lockScale = false;
@@ -165,7 +170,15 @@ let game = {
             this.LAngle = 0;
             this.power = 1;
             this.launchAngleSet = false;
-            this.lateralAngleSet = false;
+        }
+    },
+    onKeyUp: function(keyCode) {
+        if(keyCode === 37) {
+            this.leftKeyDown = false;
+            return 0;
+        } if(keyCode === 39) {
+            this.rightKeyDown = false;
+            return 0;
         }
     },
     enable: function() {
@@ -284,6 +297,11 @@ let game = {
         this.ball.update(dt);
         if(!this.ball.moving) {
             // TODO: create oscillate function so this code isn't effectively duplicated and to make support for multiple club types easier
+            if(this.leftKeyDown) {
+                this.LAngle -= 2*dt;
+            } if(this.rightKeyDown) {
+                this.LAngle += 2*dt;
+            }
             if(!this.launchAngleSet) {
                 // If launch angle isn't finalized
                 this.launchDir = 1;
@@ -292,16 +310,6 @@ let game = {
                 this.angle += this.up * 0.524 * dt;
                 if(Math.abs(this.angle - 0.261) > 0.087) {
                     this.angle = 0.261 + this.up * 0.087;
-                    this.up = -this.up;
-                }
-            } else if(!this.lateralAngleSet) {
-                // If lateral angle isn't finalized
-                // Oscillate between ~-40 and ~40 degrees
-                // max angle: 0.7 rad, min angle: -0.7 rad, middle: 0 rad, range: 1.4 rad
-                let first = (this.ball.stroke === 1);
-                this.LAngle += this.up * (2 + !first) * dt;
-                if(first && Math.abs(this.LAngle) > 0.7) {
-                    this.LAngle = this.up * 0.7;
                     this.up = -this.up;
                 }
             } else {
