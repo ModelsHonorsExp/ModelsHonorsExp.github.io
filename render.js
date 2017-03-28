@@ -22,13 +22,10 @@ game.render = function(dt) {
     // Calculate left edge in pixels - for drawing purposes.
     let realLeftEdge = this.scale * this.leftEdge;
     // Put the new scale on the screen in yards per 30 pixels.
+    this.leftCx.fillStyle = "black";
     this.leftCx.fillText(Math.round(1000 * 30 / this.scale * 1.09361) / 1000, 20, 30);
-    // Calculate the size of the stick man
-    let manHeight = 1.8 * this.scale;
-    let manWidth = manHeight / 3;
+    // Declare local groundHeight variable
     let groundHeight = this.getGroundHeight();
-    // Draw stick man with his "feet" a little behind the (0, 0) point.
-    this.leftCx.drawImage(this.manImage, -realLeftEdge - manWidth, groundHeight - manHeight, manWidth, manHeight);
     if(!this.ball.moving) {
         // If we're awaiting input
         // Tell the user we're awaiting input
@@ -48,14 +45,15 @@ game.render = function(dt) {
         this.rightCx.lineTo(left + Math.sin(this.LAngle) * Math.cos(this.angle) * 200 * this.power, bot - Math.cos(this.LAngle) * Math.cos(this.angle) * 200 * this.power);
         this.rightCx.stroke();
     }
+    // Draw things
+    this.drawTrees();
+    this.drawFlag(this.flagX, this.flagZ);
+    this.drawMan();
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
     let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
     this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
-    // Draw trees
-    this.drawTrees();
-    // Draw flag
-    this.drawFlag(this.flagX, this.flagZ);
+
     if(!this.ball.moving && (this.leftEdge !== leftEdge || this.scale !== scale)) {
         if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
             this.leftEdge = leftEdge;

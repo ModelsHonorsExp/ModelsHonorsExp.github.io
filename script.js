@@ -39,6 +39,11 @@ let game = {
             self.ready++;
         }
         this.manImage.src = "man.svg";
+        this.manImage2 = new Image();
+        this.manImage2.onload = function() {
+            self.ready++;
+        }
+        this.manImage2.src = "manlookingleft.svg";
         this.ballImage = new Image();
         this.ballImage.onload = function() {
             self.ready++;
@@ -283,6 +288,22 @@ let game = {
             let yr = this.ballinitpos - tree[0] * this.rightScale - height * this.rightScale;
             let xr = this.rightWidth / 2 + tree[3] * this.rightScale;
             this.rightCx.drawImage(this.treeImage, xr, yr, width * this.rightScale, height * this.rightScale);
+        }
+    },
+    drawMan() {
+        // Calculate the size of the stick man
+        let manHeight = 1.8 * this.scale; // 1.8 meters tall
+        let manWidth = manHeight / 3;
+        if (this.launchDir >= 0) {
+            if (!this.ball.moving) {
+                this.manX = (this.ball.pos.x - this.leftEdge) * this.scale - manWidth;
+            }
+            this.leftCx.drawImage(this.manImage, this.manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
+        } else {
+            if (!this.ball.moving) {
+                this.manX = (this.ball.pos.x - this.leftEdge) * this.scale;
+            }
+            this.leftCx.drawImage(this.manImage2, this.manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
         }
     },
     setLaunchDir: function() {
