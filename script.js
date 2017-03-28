@@ -56,7 +56,7 @@ let game = {
         this.treeImage.src = "tree.svg";
         // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready > 2) {
+            if(self.ready > 3) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -294,16 +294,13 @@ let game = {
         // Calculate the size of the stick man
         let manHeight = 1.8 * this.scale; // 1.8 meters tall
         let manWidth = manHeight / 3;
+        if (!this.ball.moving) this.ballAtRest = this.ball.pos.x;
         if (this.launchDir >= 0) {
-            if (!this.ball.moving) {
-                this.manX = (this.ball.pos.x - this.leftEdge) * this.scale - manWidth;
-            }
-            this.leftCx.drawImage(this.manImage, this.manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
+            let manX = (this.ballAtRest - this.leftEdge) * this.scale - manWidth;
+            this.leftCx.drawImage(this.manImage, manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
         } else {
-            if (!this.ball.moving) {
-                this.manX = (this.ball.pos.x - this.leftEdge) * this.scale;
-            }
-            this.leftCx.drawImage(this.manImage2, this.manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
+            let manX = (this.ballAtRest - this.leftEdge) * this.scale;
+            this.leftCx.drawImage(this.manImage2, manX, this.getGroundHeight() - manHeight, manWidth, manHeight);
         }
     },
     setLaunchDir: function() {
