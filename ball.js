@@ -124,7 +124,7 @@ game.ball.diameter = game.ball.radius * 2;
 let p = 1.225;
 let m = 0.04593;
 // q value
-//             Cd      p                              A                          m
-game.ball.q = (0.5) * (p) * (Math.PI * Math.pow(game.ball.realRadius, 2)) / (2 * m);
+//             p                              A                          m
+game.ball.q = (p) * (Math.PI * Math.pow(game.ball.realRadius, 2)) / (2 * m);
 game.ball.CL = 0.15;
 game.ball.CD = 0.21;
