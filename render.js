@@ -53,7 +53,7 @@ game.render = function(dt) {
     this.drawMan();
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - this.ball.radius, groundHeight - this.ball.pos.y*this.scale - this.ball.diameter, this.ball.diameter, this.ball.diameter);
-    let diameter = this.ball.diameter/(1 - this.ball.pos.y/40);
+    let diameter = this.ball.diameter/(1 - this.ball.pos.y/100);
     this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - this.ball.radius + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - this.ball.radius, diameter, diameter);
 
     if(!this.ball.moving && (this.leftEdge !== leftEdge || this.scale !== scale)) {

@@ -208,7 +208,7 @@ let game = {
         // It describes the zoom level in pixels per meter
         this.scale = Infinity;
         // Like this.scale but for the right canvas, which is now equivalent to 165 meters
-        this.rightScale = this.height / 165;
+        this.rightScale = this.height / 400;
         // Find random position for the flag up to 155 meters away from the stick man
         // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
         // this.flagX is set in meters and this.flagZ is set in pixels
@@ -341,8 +341,8 @@ let game = {
                 }
             } else {
                 // If power isn't finalized
-                // Oscillate between 0.2 and 1 arbitrary power units, which are a multiplier on our launch speed
-                // max power: 1, min power: 0.2, middle: 0.6, range: 0.8
+                // Oscillate between 0.85 and 1.05 arbitrary power units, which are a multiplier on our launch speed
+                // max power: 1.05, min power: 0.85, middle: 0.95, range: 0.2
                 this.power += this.up * 0.7 * dt;
                 if(Math.abs(this.power - 0.95) > 0.1) {
                     this.power = 0.95 + 0.1 * this.up;
