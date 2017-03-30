@@ -43,8 +43,8 @@ game.ball = {
             // Net velocity magnitude
             let v = Math.sqrt(Math.pow(vY, 2) + Math.pow(vLat, 2));
             // Accelerations
-            let aY = this.J * s * vLat - this.q * v * vY - this.g;
-            let aLat = -this.J * s * vY - this.q * v * vLat;
+            let aY = this.q * v * (this.CL * vLat - this.CD * vY) - this.g;
+            let aLat = this.q * v * (-this.CL * vY - this.CD * vLat);
             // Update spin
             s *= decay;
             // Euler's method
@@ -126,5 +126,5 @@ let m = 0.04593;
 // q value
 //             Cd      p                              A                          m
 game.ball.q = (0.5) * (p) * (Math.PI * Math.pow(game.ball.realRadius, 2)) / (2 * m);
-// J=16/3*pi^2*r^3*p/m;
-game.ball.J = 16 / 3 * Math.pow(Math.PI, 2) * Math.pow(game.ball.realRadius, 3) * p / m;
+game.ball.CL = 0.15;
+game.ball.CD = 0.21;

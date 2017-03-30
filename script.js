@@ -1,3 +1,21 @@
+const ANGLE = 1;
+const SPEED = 0;
+const SPIN = 2;
+const stats = [
+    [74.7, 0.1902, 44.8], // Driver
+    [70.7, 0.1606, 60.9], // 3-wood
+    [68.0, 0.1641, 72.5], // 5-wood
+    [65.3, 0.1780, 74.0], // Hybrid
+    [63.5, 0.1815, 77.2], // 3 Iron
+    [61.2, 0.1920, 80.6], // 4 Iron
+    [59.0, 0.2112, 89.4], // 5 Iron
+    [56.8, 0.2461, 103.9], // 6 Iron
+    [53.6, 0.2845, 118.3], // 7 Iron
+    [51.4, 0.3159, 133.3], // 8 Iron
+    [48.7, 0.3560, 144.1], // 9 Iron
+    [45.6, 0.4224, 155.1] // PW
+]
+
 let game = {
     ready: 0,
     start: function() {
@@ -61,7 +79,8 @@ let game = {
                 self.enable();
             }
         }, 0);
-        this.clubNames = ["Driver", "Iron", "Wedge", "Putter"];
+        this.clubNames = ["Driver", "3-wood", "5-wood", "3 Iron", "4 Iron", "5 Iron",
+                          "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW"];
         let dropdownBox = document.querySelector(".dropdown-content");
         for(let i = 0; i < this.clubNames.length; i++) {
             let button = document.createElement("button");
@@ -144,30 +163,18 @@ let game = {
         // Otherwise, advance to the next input phase or launch. See the end of game.update()
         if(!this.launchAngleSet) {
             this.launchAngleSet = true;
+            this.power = 0.85;
             this.up = 1;
         } else {
             // See Ball.launch()
             this.lockScale = false;
-            switch(this.clubNum) {
-                case 0:
-                    var max = 58;
-                    break;
-                case 1:
-                    var max = 30;
-                    break;
-                case 2:
-                    var max = 20;
-                    break;
-                default:
-                    var max = 10;
-                    break;
-            }
-            let latvel = max * Math.cos(this.angle) * this.power;
-            let vertvel = max * Math.sin(this.angle) * this.power;
+            let angle = this.angleMultiplier * stats[this.clubNum][ANGLE];
+            let latvel = stats[this.clubNum][SPEED] * Math.cos(angle) * this.power;
+            let vertvel = stats[this.clubNum][SPEED] * Math.sin(angle) * this.power;
             console.log("Stroke " + this.ball.stroke + ":\nStarting position in m = (" + this.ball.pos.x + ", " + this.ball.pos.y + ", " + this.ball.pos.z + ")\nLateral velocity = " + latvel
                 + " m/s\nLateral angle = " + this.LAngle + " rad\nVertical velocity = " + vertvel + " m/s\nSpin = 0 Hz");
             this.ball.launch(latvel, this.LAngle, vertvel, 0);
-            this.angle = 0.174;
+            this.angleMultiplier = 0.8;
             // this.up keeps track of whether we're oscillating up or down
             this.up = 1;
             // Same as angle stuff
@@ -189,8 +196,8 @@ let game = {
         this.windowResize();
         // this.lastUpdate is used to calculate dt
         this.lastUpdate = Date.now();
-        // this.angle is used during oscillation to keep track of where it is while going up and down.
-        this.angle = 0.174;
+        // this.angleMultiplier is used during oscillation to keep track of where it is while going up and down.
+        this.angleMultiplier = 0.8;
         this.launchDir = 1;
         // this.up keeps track of whether we're oscillating up or down
         this.up = 1;
@@ -324,21 +331,21 @@ let game = {
                 this.LAngle += 2*dt;
                 this.setLaunchDir();
             }
+
             if(!this.launchAngleSet) {
-                // Oscillate between ~10 and ~20 degrees
-                // max angle: 0.348 rad, min angle: 0.174 rad, middle: 0.261 rad, range: 0.174 rad
-                this.angle += this.up * 0.524 * dt;
-                if(Math.abs(this.angle - 0.261) > 0.087) {
-                    this.angle = 0.261 + this.up * 0.087;
+                //console.log(this.angleMultiplier);
+                this.angleMultiplier += this.up * 2 * dt;
+                if(Math.abs(this.angleMultiplier - 1) > 0.3) {
+                    this.angleMultiplier = 1 + this.up * 0.3;
                     this.up = -this.up;
                 }
             } else {
                 // If power isn't finalized
                 // Oscillate between 0.2 and 1 arbitrary power units, which are a multiplier on our launch speed
                 // max power: 1, min power: 0.2, middle: 0.6, range: 0.8
-                this.power += this.up * 3 * dt;
-                if(Math.abs(this.power - 0.6) > 0.4) {
-                    this.power = 0.6 + 0.4 * this.up;
+                this.power += this.up * 0.7 * dt;
+                if(Math.abs(this.power - 0.95) > 0.1) {
+                    this.power = 0.95 + 0.1 * this.up;
                     this.up = -this.up;
                 }
             }

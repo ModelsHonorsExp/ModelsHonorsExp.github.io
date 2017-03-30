@@ -33,8 +33,10 @@ game.render = function(dt) {
         this.leftCx.beginPath();
         let left = -realLeftEdge + this.ball.pos.x * this.scale;
         let bot = groundHeight - this.ball.radius;
+        let angle = this.angleMultiplier * stats[this.clubNum][ANGLE];
+        let renderPower = (this.power - 0.7) * 3.5;
         this.leftCx.moveTo(left, bot);
-        this.leftCx.lineTo(left + 400 * Math.cos(this.angle) * Math.cos(this.LAngle) * this.power, bot - 400 * Math.sin(this.angle) * this.power);
+        this.leftCx.lineTo(left + 400 * Math.cos(angle) * Math.cos(this.LAngle) * renderPower, bot - 400 * Math.sin(angle) * renderPower);
         // Write the line to the screen
         this.leftCx.stroke();
         left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
@@ -42,7 +44,7 @@ game.render = function(dt) {
         bot = this.ballinitpos - this.ball.pos.x * this.rightScale;
         this.rightCx.beginPath();
         this.rightCx.moveTo(left, bot);
-        this.rightCx.lineTo(left + Math.sin(this.LAngle) * Math.cos(this.angle) * 200 * this.power, bot - Math.cos(this.LAngle) * Math.cos(this.angle) * 200 * this.power);
+        this.rightCx.lineTo(left + Math.sin(this.LAngle) * Math.cos(angle) * 200 * renderPower, bot - Math.cos(this.LAngle) * Math.cos(angle) * 200 * renderPower);
         this.rightCx.stroke();
     }
     // Draw things
