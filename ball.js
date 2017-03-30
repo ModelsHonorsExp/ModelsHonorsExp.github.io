@@ -115,12 +115,8 @@ game.ball.realRadius = 0.02135;
 game.ball.g = 9.80665;
 // Whether or not the ball is mid-launch
 game.ball.moving = false;
-// Radius of image in pixels (for drawing purposes)
-game.ball.radius = 5;
 // Initial position
 game.ball.pos = {x: 0, z: 0, y: 0};
-// Diameter of image in pixels (for drawing purposes)
-game.ball.diameter = game.ball.radius * 2;
 let p = 1.225;
 let m = 0.04593;
 // q value
