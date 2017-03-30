@@ -72,9 +72,14 @@ let game = {
             self.ready++;
         }
         this.treeImage.src = "tree.svg";
+        this.leftFlagImage = new Image();
+        this.leftFlagImage.onload = function() {
+            self.ready++;
+        }
+        this.leftFlagImage.src = "flag.svg";
         // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready > 3) {
+            if(self.ready > 4) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -82,6 +87,8 @@ let game = {
         this.clubNames = ["Driver", "3-wood", "5-wood", "3 Iron", "4 Iron", "5 Iron",
                           "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW"];
         let dropdownBox = document.querySelector(".dropdown-content");
+
+        // Generate buttons
         for(let i = 0; i < this.clubNames.length; i++) {
             let button = document.createElement("button");
             button.innerHTML = this.clubNames[i];
@@ -90,14 +97,6 @@ let game = {
             }
             dropdownBox.appendChild(button);
         }
-        /* for loop adds this to HTML:
-
-        <button onclick="game.setClub(0);">Driver</button>
-        <button onclick="game.setClub(1);">Iron</button>
-        <button onclick="game.setClub(2);">Wedge</button>
-        <button onclick="game.setClub(3);">Putter</button>
-
-        */
 
         this.dropdownButton = document.querySelector(".dropbtn");
         this.setClub(0);
@@ -242,32 +241,17 @@ let game = {
         return this.height - this.groundHeight;
     },
     drawFlag(x, z) {
-        // Set flag height in meters
+        // This section is a little weird because I (Tim) replaced the drawing code with an SVG and haven't totally cleaned it up yet
+        // Set flag rod in meters
         let height = this.scale * 3;
-        // Set flag pole width relative to height
-        let width = height / 50;
-        // Set radius of golf ball hole relative to height
-        let radius = height / 20;
-        // Set x and y coordinates of center of golf ball hole
-        let xh = this.scale * (-this.leftEdge + x);
-        let yh = this.getGroundHeight();
-        // Draw golf ball hole
-        this.leftCx.beginPath();
-        this.leftCx.ellipse(xh, yh, radius, radius, 0, Math.PI, 2 * Math.PI, 1);
-        this.leftCx.fillStyle = "black";
-        this.leftCx.fill();
-        // Set x and y coordinates for flag pole in left window
-        let xl = xh - width / 2;
-        let yl = yh - height;
-        // Draw flag in left window
-        this.leftCx.fillStyle = "grey";
-        this.leftCx.fillRect(xl, yl, width, height);
-        this.leftCx.beginPath();
-        this.leftCx.moveTo(xl, yl);
-        this.leftCx.lineTo(xl - height/2.5, yl + height/10);
-        this.leftCx.lineTo(xl, yl + height/5);
-        this.leftCx.fillStyle = "red";
-        this.leftCx.fill();
+        // Calculate left and right boundaries
+        let xl = this.scale * (-this.leftEdge + x) - height / 100;
+        let yl = this.getGroundHeight() - height;
+        // Total height of flag
+        let height2 = this.scale * 3.15;
+        this.leftCx.drawImage(this.leftFlagImage, xl - height/2.5, yl, height2*138/315, height2);
+
+        // TODO: replace with an SVG
         // Set flag height to 50 pixels (constant)
         height = 50;
         // Set x and y coordinates for flag pole in right window
