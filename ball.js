@@ -101,7 +101,13 @@ game.ball = {
             this.pos.y = 0;
             index = this.divs - 1;
             this.moving = false;
+            this.pos.x = this.x[index];
+            this.pos.z = this.z[index];
+            delete this.x;
+            delete this.z;
+            delete this.h;
             this.stroke++;
+            return 0;
         }
         this.pos.x = this.x[index];
         this.pos.z = this.z[index];
