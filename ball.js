@@ -81,8 +81,8 @@ game.ball = {
             }
             if(vY < 0 && this.h[this.divs] <= 0) {
                 this.h[this.divs] = 0;
-                let range = Math.sqrt(Math.pow(this.x[this.divs], 2) + Math.pow(this.z[this.divs], 2));
-                console.log("Range for arc " + arc + ": " + range + " m");
+                let range = Math.sqrt(Math.pow(this.x[this.divs] - this.x[0], 2) + Math.pow(this.z[this.divs] - this.z[0], 2));
+                console.log("Range after arc " + arc + ": " + range + " m");
                 arc++;
                 maxed = false;
                 if(v > 1) {
