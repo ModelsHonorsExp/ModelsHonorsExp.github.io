@@ -23,7 +23,7 @@ game.ball = {
         this.dt = Math.pow(10, -5);
         // Spin decay per iteration
         let decay = Math.exp(-this.dt/30);
-        let s = spin;
+        let omega = spin * 2 * Math.PI;
 
         let xSign = Math.sign(cosLat);
         let xIndex = (1 - xSign) / 2;
@@ -38,21 +38,27 @@ game.ball = {
         while(game.tree_zSorted[zCurrent] !== undefined && zSign * this.pos.z > zSign * game.tree_zSorted[zCurrent][zIndex]) {
             zCurrent += zSign;
         }
+        let arc = 1;
+        let maxed = false;
 
-        while(this.divs === 1 || this.h[this.divs-1] > 0) { // If it's the first calculation or we're above the ground
+        while(true) { // If it's the first calculation or we're above the ground
             // Net velocity magnitude
             let v = Math.sqrt(Math.pow(vY, 2) + Math.pow(vLat, 2));
             // Accelerations
             let aY = this.q * v * (this.CL * vLat - this.CD * vY) - this.g;
             let aLat = this.q * v * (-this.CL * vY - this.CD * vLat);
             // Update spin
-            s *= decay;
+            omega *= decay;
             // Euler's method
             vY += aY * this.dt;
             vLat += aLat * this.dt;
             this.h[this.divs] = this.h[this.divs-1] + vY * this.dt;
             this.x[this.divs] = this.x[this.divs-1] + vLat * this.dt * cosLat;
             this.z[this.divs] = this.z[this.divs-1] + vLat * this.dt * sinLat;
+            if(!maxed && this.h[this.divs] <= this.h[this.divs - 1]) {
+                maxed = true;
+                console.log("Max height for arc " + arc + ": " + this.h[this.divs - 1] + " m");
+            }
 
             if(game.tree_xSorted[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.tree_xSorted[xCurrent][xIndex] - this.realRadius)) {
                 if(this.h[this.divs] <= game.tree_xSorted[xCurrent][2] && this.z[this.divs] >= game.tree_xSorted[xCurrent][3] && this.z[this.divs] <= game.tree_xSorted[xCurrent][4]) {
@@ -73,7 +79,23 @@ game.ball = {
                 }
                 zCurrent += zSign;
             }
-
+            if(vY < 0 && this.h[this.divs] <= 0) {
+                this.h[this.divs] = 0;
+                let range = Math.sqrt(Math.pow(this.x[this.divs], 2) + Math.pow(this.z[this.divs], 2));
+                console.log("Range for arc " + arc + ": " + range + " m");
+                arc++;
+                maxed = false;
+                if(v > 1) {
+                    let rest = (v <= 20) ? (0.510 - 0.0375*v + 0.000903*Math.pow(v, 2)) : 0.12;
+                    let theta1 = Math.atan(-vLat/vY);
+                    let thetac = 15.4*v*theta1/(18.6*44.4);
+                    vLat = 5/7*v*Math.sin(theta1 - thetac) - 2*this.realRadius*omega/7;
+                    vY = rest * v * Math.cos(theta1 - thetac);
+                    omega = vLat / this.realRadius;
+                } else {
+                    break;
+                }
+            }
             // Increase iterative variable
             this.divs++;
         }
@@ -94,15 +116,14 @@ game.ball = {
         this.time += dt;
         // Find our closest pre-calculated position by reducing it to one of the array indices
         let index = Math.floor(this.time / this.dt);
-        this.pos.y = this.h[index];
-        if(index >= this.divs) {
+        if(index > this.divs) {
             // If we're at the end of the shot
             // Put us on the ground on the last frame
-            this.pos.y = 0;
-            index = this.divs - 1;
+            index = this.divs;
             this.moving = false;
             this.pos.x = this.x[index];
             this.pos.z = this.z[index];
+            this.pos.y = this.h[index];
             delete this.x;
             delete this.z;
             delete this.h;
@@ -111,6 +132,7 @@ game.ball = {
         }
         this.pos.x = this.x[index];
         this.pos.z = this.z[index];
+        this.pos.y = this.h[index];
     }
 }
 
