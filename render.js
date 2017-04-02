@@ -70,31 +70,22 @@ game.render = function(dt) {
     }
 }
 game.drawFlag = function(x, z) {
-    // This section is a little weird because I (Tim) replaced the drawing code with an SVG and haven't totally cleaned it up yet
     // Set flag rod in meters
     let height = this.scale * 3;
     // Calculate left and right boundaries
-    let xl = this.scale * (-this.leftEdge + x) - height / 100;
+    let xl = this.scale * (-this.leftEdge + x) - 41*height/100;
     let yl = this.getGroundHeight() - height;
     // Total height of flag
     let height2 = this.scale * 3.15;
-    this.leftCx.drawImage(this.leftFlagImage, xl - height/2.5, yl, height2*138/315, height2);
+    this.leftCx.drawImage(this.leftFlagImage, xl, yl, height2*138/315, height2);
 
-    // TODO: replace with an SVG
     // Set flag height to 50 pixels (constant)
     height = 50;
     // Set x and y coordinates for flag pole in right window
-    let xr = this.rightWidth / 2 + z;
-    let yr = this.ballinitpos - x * this.rightScale - height + height / 5;
+    let xr = this.rightWidth / 2 + z * this.rightScale - 3*height/5;
+    let yr = this.ballinitpos - x * this.rightScale - height;
     // Draw flag in right window
-    this.rightCx.fillStyle = "grey";
-    this.rightCx.fillRect(xr, yr, height/5, height);
-    this.rightCx.beginPath();
-    this.rightCx.moveTo(xr, yr);
-    this.rightCx.lineTo(xr - height/2, yr + height/5);
-    this.rightCx.lineTo(xr, yr + height/2.5);
-    this.rightCx.fillStyle = "red";
-    this.rightCx.fill();
+    this.rightCx.drawImage(this.rightFlagImage, xr, yr, 7*height/10, height);
 }
 game.drawTrees = function() {
     for(let i = 0; i < this.tree_xSorted.length; i++) {

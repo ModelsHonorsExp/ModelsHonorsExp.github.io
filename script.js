@@ -52,34 +52,18 @@ let game = {
         this.leftCanvas.onclick = onclick;
         this.rightCanvas.onclick = onclick;
         // Images in JS load asynchonously, so we give a callback that increments game.ready
-        this.manImage = new Image();
-        this.manImage.onload = function() {
-            self.ready++;
+        // Even indices are file names, odd are the names of the associated images in the game
+        let images = ["man.svg", "manImage", "manlookingleft.svg", "manImage2", "ball.svg", "ballImage", "tree.svg", "treeImage", "flag.svg", "leftFlagImage", "rightFlag.svg", "rightFlagImage"];
+        for(let i = 0; i < images.length; i+=2) {
+            this[images[i+1]] = new Image();
+            this[images[i+1]].onload = function() {
+                self.ready++;
+            }
+            this[images[i+1]].src = images[i];
         }
-        this.manImage.src = "man.svg";
-        this.manImage2 = new Image();
-        this.manImage2.onload = function() {
-            self.ready++;
-        }
-        this.manImage2.src = "manlookingleft.svg";
-        this.ballImage = new Image();
-        this.ballImage.onload = function() {
-            self.ready++;
-        }
-        this.ballImage.src = "ball.svg";
-        this.treeImage = new Image();
-        this.treeImage.onload = function() {
-            self.ready++;
-        }
-        this.treeImage.src = "tree.svg";
-        this.leftFlagImage = new Image();
-        this.leftFlagImage.onload = function() {
-            self.ready++;
-        }
-        this.leftFlagImage.src = "flag.svg";
         // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready > 4) {
+            if(self.ready <= images.length / 2) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -172,7 +156,7 @@ let game = {
             let vertvel = stats[this.clubNum][SPEED] * Math.sin(angle) * this.power;
             console.log("Stroke " + this.ball.stroke + ":\nStarting position in m = (" + this.ball.pos.x + ", " + this.ball.pos.y + ", " + this.ball.pos.z + ")\nLateral velocity = " + latvel
                 + " m/s\nLateral angle = " + this.LAngle + " rad\nVertical velocity = " + vertvel + " m/s\nSpin = 0 Hz");
-            this.ball.launch(latvel, this.LAngle, vertvel, 0);
+            this.ball.launch(latvel, this.LAngle, vertvel, stats[this.clubNum][SPIN]);
             this.angleMultiplier = 0.8;
             // this.up keeps track of whether we're oscillating up or down
             this.up = 1;
@@ -210,9 +194,9 @@ let game = {
         this.rightScale = this.height / 400;
         // Find random position for the flag up to 155 meters away from the stick man
         // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
-        // this.flagX is set in meters and this.flagZ is set in pixels
+        // this.flagX and this.flagZ are set in meters
         this.flagX = Math.floor(Math.random() * 150) + 5;
-        this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2);
+        this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale;
 
         this.tree_xSorted = [];
         this.tree_zSorted = [];
