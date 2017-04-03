@@ -37,7 +37,7 @@ game.render = function(dt) {
     if(!this.ball.moving) {
         // If we're awaiting input
         // Tell the user we're awaiting input
-        this.leftCx.fillText("Press any key or tap screen", 20, 80);
+        this.leftCx.fillText("Press any key or tap screen", 20, 65);
         this.leftCx.beginPath();
         let left = -realLeftEdge + this.ball.pos.x * this.scale;
         let bot = groundHeight - leftDiameter/2;

@@ -1,7 +1,11 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: "Courier New";
+    font-family: 'Helvetica';
+}
+html, body, canvas {
+    margin: 0;
+    padding: 0;
 }
 html, body {
     touch-action: manipulation;
@@ -22,4 +26,8 @@ canvas {
 }
 #right {
     margin-left: 60%;
+}
+h2, p, .dropdown, .LR {
+    padding: 0;
+    margin: 0 0 3px 3px;
 }

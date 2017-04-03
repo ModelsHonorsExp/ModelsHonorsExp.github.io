@@ -59,7 +59,7 @@ let game = {
             this[images[i+1]].onload = function() {
                 self.ready++;
             }
-            this[images[i+1]].src = images[i];
+            this[images[i+1]].src = "images/" + images[i];
         }
         // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
@@ -90,7 +90,7 @@ let game = {
         this.width = window.innerWidth;
         this.leftWidth = this.width * 3 / 5;
         this.rightWidth = this.width - this.leftWidth;
-        this.height = window.innerHeight - 106;
+        this.height = window.innerHeight - 110;
         // Set canvases to fill page
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
@@ -99,8 +99,8 @@ let game = {
         this.rightCanvas.setAttribute("width", this.rightWidth);
         this.rightCanvas.setAttribute("height", this.height);
         // Resizing canvases f%$#s up all the fill options, so we have to set those again
-        this.leftCx.font = "20px Courier New";
-        this.bgCx.font = "20px Courier New";
+        this.leftCx.font = "lighter 20px Helvetica";
+        this.bgCx.font = "lighter 20px Helvetica";
         this.rightCx.strokeStyle = "white";
         this.rightCx.lineWidth = 4;
         this.leftCx.strokeStyle = "gray";
