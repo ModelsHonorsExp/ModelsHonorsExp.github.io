@@ -200,11 +200,11 @@ let game = {
 
         this.tree_xSorted = [];
         this.tree_zSorted = [];
-        for(let i = 0; i < 3; i++) {
+        for(let i = 0; i < 9; i++) {
             let treeX = Math.floor(Math.random() * 150) + 5;
             let treeZ = Math.floor((Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale);
             // [front, back, top, left, right]
-            this.tree_xSorted[i] = [treeX, treeX+7, 10, treeZ, treeZ+7];
+            this.tree_xSorted[i] = [treeX, treeX+9, 16, treeZ, treeZ+9];
             console.log("Tree:\nx = " + treeX + " through " + this.tree_xSorted[i][1] +"\nz = " + treeZ + " through " + this.tree_xSorted[i][4]);
             this.tree_zSorted[i] = this.tree_xSorted[i];
         }

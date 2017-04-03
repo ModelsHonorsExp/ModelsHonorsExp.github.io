@@ -94,8 +94,10 @@ game.drawTrees = function() {
         let yl = this.getGroundHeight() - tree[2] * this.scale + 1;
         let xl = this.scale * (-this.leftEdge + tree[0]);
         this.leftCx.drawImage(this.treeImage, xl, yl, width * this.scale, tree[2] * this.scale);
-        let height = width;  // height meters
-        width = tree[4] - tree[3];  // width in meters
+    } for(let i = 0; i < this.tree_zSorted.length; i++) {
+        let tree = this.tree_zSorted[i];
+        let height = tree[1] - tree[0];  // height meters
+        let width = tree[4] - tree[3];  // width in meters
         let yr = this.ballinitpos - tree[0] * this.rightScale - height * this.rightScale;
         let xr = this.rightWidth / 2 + tree[3] * this.rightScale;
         this.rightCx.drawImage(this.treeImage, xr, yr, width * this.rightScale, height * this.rightScale);
