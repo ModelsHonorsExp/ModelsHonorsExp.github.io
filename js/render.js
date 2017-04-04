@@ -24,6 +24,7 @@ game.render = function(dt) {
     // Put the new scale on the screen in yards per 30 pixels.
     this.leftCx.fillStyle = "black";
     this.leftCx.fillText(Math.round(1000 * 30 / this.scale * 1.09361) / 1000, 20, 30);
+    this.leftCx.fillText("Stroke " + this.ball.stroke, 20, 65);
     // Declare local groundHeight variable
     let groundHeight = this.getGroundHeight();
     // Draw things
@@ -37,7 +38,7 @@ game.render = function(dt) {
     if(!this.ball.moving) {
         // If we're awaiting input
         // Tell the user we're awaiting input
-        this.leftCx.fillText("Press any key or tap screen", 20, 65);
+        this.leftCx.fillText("Press any key or tap screen", 20, 100);
         this.leftCx.beginPath();
         let left = -realLeftEdge + this.ball.pos.x * this.scale;
         let bot = groundHeight - leftDiameter/2;
