@@ -81,6 +81,15 @@ game.ball = {
             }
             if(vY < 0 && this.h[this.divs] <= 0) {
                 this.h[this.divs] = 0;
+                switch(game.checkLocation(this.z[this.divs], this.x[this.divs])) {
+                    case FAIRWAY:
+                    console.log("Landing zone for arc " + arc + ": Fairway");
+                    break;
+
+                    case ROUGH:
+                    console.log("Landing zone for arc " + arc + ": Rough");
+                    break;
+                }
                 let range = Math.sqrt(Math.pow(this.x[this.divs] - this.x[0], 2) + Math.pow(this.z[this.divs] - this.z[0], 2));
                 console.log("Range after arc " + arc + ": " + range + " m");
                 arc++;

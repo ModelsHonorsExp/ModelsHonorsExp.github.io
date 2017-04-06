@@ -53,7 +53,8 @@ let game = {
         this.rightCanvas.onclick = onclick;
         // Images in JS load asynchonously, so we give a callback that increments game.ready
         // Even indices are file names, odd are the names of the associated images in the game
-        let images = ["man.svg", "manImage", "manlookingleft.svg", "manImage2", "ball.svg", "ballImage", "tree.svg", "treeImage", "flag.svg", "leftFlagImage", "rightFlag.svg", "rightFlagImage"];
+        let images = ["man.svg", "manImage", "manlookingleft.svg", "manImage2", "ball.svg", "ballImage",
+        "tree.svg", "treeImage", "flag.svg", "leftFlagImage", "rightFlag.svg", "rightFlagImage", "fairway.svg", "fairwayImage"];
         for(let i = 0; i < images.length; i+=2) {
             this[images[i+1]] = new Image();
             this[images[i+1]].onload = function() {
@@ -63,7 +64,7 @@ let game = {
         }
         // This loop waits for the images to load, then starts the game. See game.enable()
         let loop = setInterval(function() {
-            if(self.ready <= images.length / 2) {
+            if(self.ready >= images.length / 2) {
                 clearInterval(loop);
                 self.enable();
             }
@@ -91,6 +92,10 @@ let game = {
         this.leftWidth = this.width * 3 / 5;
         this.rightWidth = this.width - this.leftWidth;
         this.height = window.innerHeight - 110;
+        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
+        this.ballinitpos = this.height * 0.975;
+        // Like this.scale but for the right canvas
+        this.rightScale = this.height / 400;
         // Set canvases to fill page
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
@@ -105,12 +110,14 @@ let game = {
         this.rightCx.lineWidth = 4;
         this.leftCx.strokeStyle = "gray";
         this.leftCx.lineWidth = 4;
+        this.bgCx.fillStyle = "#005500";
+        this.bgCx.fillRect(this.leftWidth, 0, this.rightWidth, this.height);
         // Set background fill color to green
         this.bgCx.fillStyle = "green";
         let groundHeight = this.getGroundHeight();
         // Draw grass. JS canvases place the zero point at the top and y increases going down, so everything has to be flipped over.
         this.bgCx.fillRect(0, groundHeight, this.leftWidth, this.height - groundHeight);
-        this.bgCx.fillRect(this.leftWidth, 0, this.rightWidth, this.height);
+        this.bgCx.drawImage(this.fairwayImage, this.leftWidth + this.rightWidth/2 - 60*this.rightScale, this.ballinitpos - 310*this.rightScale, 275.463*this.rightScale, 350*this.rightScale);
         // Draw line in corner
         this.bgCx.lineWidth = 1;
         this.bgCx.beginPath();
@@ -126,8 +133,6 @@ let game = {
         // Putting this on the background means we only have to redraw the number every frame, plus keeps it in a consistent location
         this.bgCx.fillStyle = "black";
         this.bgCx.fillText("yards", 90, 30);
-        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.975;
     },
     onKeyDown: function(keyCode) {
         if(this.ball.moving) {
@@ -190,8 +195,6 @@ let game = {
         // this.scale is set in the update loop - setting it to Infinity ensures that it is set properly the first time through the update loop.
         // It describes the zoom level in pixels per meter
         this.scale = Infinity;
-        // Like this.scale but for the right canvas, which is now equivalent to 165 meters
-        this.rightScale = this.height / 400;
         // Find random position for the flag up to 155 meters away from the stick man
         // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
         // this.flagX and this.flagZ are set in meters
