@@ -48,7 +48,7 @@ game.render = function(dt) {
         this.leftCx.lineTo(left + 400 * Math.cos(angle) * Math.cos(this.LAngle) * renderPower, bot - 400 * Math.sin(angle) * renderPower);
         // Write the lines to the screen
         this.leftCx.stroke();
-        left = this.rightWidth / 2 + this.ball.pos.z * this.rightScale;
+        left = this.rightWidth/2 + this.ball.pos.z * this.rightScale;
         bot = this.ballinitpos - this.ball.pos.x * this.rightScale;
         this.rightCx.beginPath();
         this.rightCx.moveTo(left, bot);
@@ -58,7 +58,7 @@ game.render = function(dt) {
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - leftDiameter/2, groundHeight - this.ball.pos.y*this.scale - leftDiameter, leftDiameter, leftDiameter);
     let diameter = 8/(1 - this.ball.pos.y/100);
-    this.rightCx.drawImage(this.ballImage, this.rightWidth / 2 - diameter/2 + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - diameter/2, diameter, diameter);
+    this.rightCx.drawImage(this.ballImage, this.rightWidth/2 - diameter/2 + this.ball.pos.z*this.rightScale, this.ballinitpos - this.ball.pos.x*this.rightScale - diameter/2, diameter, diameter);
 
     if(!this.ball.moving && (this.leftEdge !== leftEdge || this.scale !== scale)) {
         if(Math.abs(this.leftEdge - leftEdge) < 0.01 && Math.abs(this.scale / scale - 1) < 0.01) {
@@ -83,7 +83,7 @@ game.drawFlag = function(x, z) {
     // Set flag height to 50 pixels (constant)
     height = 50;
     // Set x and y coordinates for flag pole in right window
-    let xr = this.rightWidth / 2 + z * this.rightScale - 3*height/5;
+    let xr = this.rightWidth/2 + z * this.rightScale - 3*height/5;
     let yr = this.ballinitpos - x * this.rightScale - height;
     // Draw flag in right window
     this.rightCx.drawImage(this.rightFlagImage, xr, yr, 7*height/10, height);
@@ -100,7 +100,7 @@ game.drawTrees = function() {
         let height = tree[1] - tree[0];  // height meters
         let width = tree[4] - tree[3];  // width in meters
         let yr = this.ballinitpos - tree[0] * this.rightScale - height * this.rightScale;
-        let xr = this.rightWidth / 2 + tree[3] * this.rightScale;
+        let xr = this.rightWidth/2 + tree[3] * this.rightScale;
         this.rightCx.drawImage(this.treeImage, xr, yr, width * this.rightScale, height * this.rightScale);
     }
 }

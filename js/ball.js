@@ -1,9 +1,9 @@
 game.ball = {
     stroke: 1,
+    location: FAIRWAY,
     // Since the math for the X and Z directions is the same, throughout this object, "R" is used as a stand-in for X or Z when it can be specified by the caller of the function/property
     launch: function(v0lat, angleLat, v0y, spin) {
         this.angleLat = angleLat;
-
         // Array length, makes life/processing easier
         this.divs = 1;
         // Height array
@@ -81,7 +81,12 @@ game.ball = {
             }
             if(vY < 0 && this.h[this.divs] <= 0) {
                 this.h[this.divs] = 0;
-                switch(game.checkLocation(this.z[this.divs], this.x[this.divs])) {
+                this.location = game.checkLocation(this.z[this.divs], this.x[this.divs]);
+                switch(this.location) {
+                    case GREEN:
+                    console.log("Landing zone for arc " + arc + ": Green")
+                    break;
+
                     case FAIRWAY:
                     console.log("Landing zone for arc " + arc + ": Fairway");
                     break;
@@ -153,7 +158,7 @@ game.ball.g = 9.80665;
 // Whether or not the ball is mid-launch
 game.ball.moving = false;
 // Initial position
-game.ball.pos = {x: 0, z: 0, y: 0};
+game.ball.pos = {x: -50, z: -59, y: 0};
 let p = 1.225;
 let m = 0.04593;
 // q value

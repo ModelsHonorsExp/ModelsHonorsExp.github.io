@@ -93,7 +93,7 @@ let game = {
         this.rightWidth = this.width - this.leftWidth;
         this.height = window.innerHeight - 110;
         // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.975;
+        this.ballinitpos = this.height * 0.7;
         // Like this.scale but for the right canvas
         this.rightScale = this.height / 400;
         // Set canvases to fill page
@@ -117,7 +117,8 @@ let game = {
         let groundHeight = this.getGroundHeight();
         // Draw grass. JS canvases place the zero point at the top and y increases going down, so everything has to be flipped over.
         this.bgCx.fillRect(0, groundHeight, this.leftWidth, this.height - groundHeight);
-        this.bgCx.drawImage(this.fairwayImage, this.leftWidth + this.rightWidth/2 - 60*this.rightScale, this.ballinitpos - 310*this.rightScale, 275.463*this.rightScale, 350*this.rightScale);
+        this.bgCx.drawImage(this.fairwayImage, this.leftWidth + this.rightWidth/2 - LEFTSHIFT*SCALEFACTOR*this.rightScale,
+            this.ballinitpos - 350*SCALEFACTOR*this.rightScale, 275.463*SCALEFACTOR*this.rightScale, 350*SCALEFACTOR*this.rightScale);
         // Draw line in corner
         this.bgCx.lineWidth = 1;
         this.bgCx.beginPath();
@@ -157,6 +158,9 @@ let game = {
             // See Ball.launch()
             this.lockScale = false;
             let angle = this.angleMultiplier * stats[this.clubNum][ANGLE];
+            if(this.ball.location === ROUGH) {
+                this.power *= 0.6;
+            }
             let latvel = stats[this.clubNum][SPEED] * Math.cos(angle) * this.power;
             let vertvel = stats[this.clubNum][SPEED] * Math.sin(angle) * this.power;
             console.log("Stroke " + this.ball.stroke + ":\nStarting position in m = (" + this.ball.pos.x + ", " + this.ball.pos.y + ", " + this.ball.pos.z + ")\nLateral velocity = " + latvel
