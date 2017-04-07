@@ -3,150 +3,123 @@ game.ball = {
     location: FAIRWAY,
     // Since the math for the X and Z directions is the same, throughout this object, "R" is used as a stand-in for X or Z when it can be specified by the caller of the function/property
     launch: function(v0lat, angleLat, v0y, spin) {
+        this.x0 = this.pos.x;
+        this.z0 = this.pos.z;
+
         this.angleLat = angleLat;
         // Array length, makes life/processing easier
-        this.divs = 1;
-        // Height array
-        // TODO: look into preallocating with an estimated amount of entries to save time for this.h and this.lat
-        this.h = [this.pos.y];
-        // Lateral position array
-        // Everything lateral is just x and z in the plane of the lateral angle
-        this.x = [this.pos.x];
-        this.z = [this.pos.z];
+        this.divs = 0;
+        this.yLast = this.pos.y - 1;
         // Vertical velocity
-        let vY = v0y;
+        this.vY = v0y;
         // Lateral velocity
-        let vLat = v0lat;
-        let sinLat = Math.sin(angleLat);
-        let cosLat = Math.cos(angleLat);
+        this.vLat = v0lat;
+        this.sinLat = Math.sin(angleLat);
+        this.cosLat = Math.cos(angleLat);
         // Delta t, lower = higher precision and longer swing time
         this.dt = Math.pow(10, -5);
         // Spin decay per iteration
-        let decay = Math.exp(-this.dt/30);
-        let omega = spin * 2 * Math.PI;
+        this.decay = Math.exp(-this.dt/30);
+        this.omega = spin * 2 * Math.PI;
 
-        let xSign = Math.sign(cosLat);
-        let xIndex = (1 - xSign) / 2;
-        let xCurrent = xIndex * (game.tree_xSorted.length - 1);
-        while(game.tree_xSorted[xCurrent] !== undefined && xSign * this.pos.x > xSign * game.tree_xSorted[xCurrent][xIndex]) {
-            xCurrent += xSign;
+        this.xSign = Math.sign(this.cosLat);
+        this.xIndex = (1 - this.xSign) / 2;
+        this.xCurrent = this.xIndex * (game.tree_xSorted.length - 1);
+        while(game.tree_xSorted[this.xCurrent] !== undefined && this.xSign * this.pos.x > this.xSign * game.tree_xSorted[this.xCurrent][this.xIndex]) {
+            this.xCurrent += this.xSign;
         }
 
-        let zSign = Math.sign(sinLat);
-        let zIndex = (1 - zSign) / 2 + 3;
-        let zCurrent = (zIndex - 3) * (game.tree_zSorted.length - 1);
-        while(game.tree_zSorted[zCurrent] !== undefined && zSign * this.pos.z > zSign * game.tree_zSorted[zCurrent][zIndex]) {
-            zCurrent += zSign;
+        this.zSign = Math.sign(this.sinLat);
+        this.zIndex = (1 - this.zSign) / 2 + 3;
+        this.zCurrent = (this.zIndex - 3) * (game.tree_zSorted.length - 1);
+        while(game.tree_zSorted[this.zCurrent] !== undefined && this.zSign * this.pos.z > this.zSign * game.tree_zSorted[this.zCurrent][this.zIndex]) {
+            this.zCurrent += this.zSign;
         }
-        let arc = 1;
-        let maxed = false;
-
-        while(true) { // If it's the first calculation or we're above the ground
-            // Net velocity magnitude
-            let v = Math.sqrt(Math.pow(vY, 2) + Math.pow(vLat, 2));
-            // Accelerations
-            let aY = this.q * v * (this.CL * vLat - this.CD * vY) - this.g;
-            let aLat = this.q * v * (-this.CL * vY - this.CD * vLat);
-            // Update spin
-            omega *= decay;
-            // Euler's method
-            vY += aY * this.dt;
-            vLat += aLat * this.dt;
-            this.h[this.divs] = this.h[this.divs-1] + vY * this.dt;
-            this.x[this.divs] = this.x[this.divs-1] + vLat * this.dt * cosLat;
-            this.z[this.divs] = this.z[this.divs-1] + vLat * this.dt * sinLat;
-            if(!maxed && this.h[this.divs] <= this.h[this.divs - 1]) {
-                maxed = true;
-                console.log("Max height for arc " + arc + ": " + this.h[this.divs - 1] + " m");
-            }
-
-            if(game.tree_xSorted[xCurrent] !== undefined && xSign * this.x[this.divs] >= xSign * (game.tree_xSorted[xCurrent][xIndex] - this.realRadius)) {
-                if(this.h[this.divs] <= game.tree_xSorted[xCurrent][2] && this.z[this.divs] >= game.tree_xSorted[xCurrent][3] && this.z[this.divs] <= game.tree_xSorted[xCurrent][4]) {
-                    this.x[this.divs] = game.tree_xSorted[xCurrent][xIndex] - this.realRadius * xSign;
-                    cosLat = -cosLat;
-                    xSign = -xSign;
-                    xIndex = 1 - xIndex;
-                }
-                xCurrent += xSign;
-            }
-
-            if(game.tree_zSorted[zCurrent] !== undefined && zSign * this.z[this.divs] >= zSign * (game.tree_zSorted[zCurrent][zIndex] - this.realRadius)) {
-                if(this.h[this.divs] <= game.tree_zSorted[zCurrent][2] && this.x[this.divs] >= game.tree_zSorted[zCurrent][0] && this.x[this.divs] <= game.tree_zSorted[zCurrent][1]) {
-                    this.z[this.divs] = game.tree_zSorted[zCurrent][zIndex] - this.realRadius * zSign;
-                    sinLat = -sinLat;
-                    zSign = -zSign;
-                    zIndex = (1 - zSign) / 2 + 3;
-                }
-                zCurrent += zSign;
-            }
-            if(vY < 0 && this.h[this.divs] <= 0) {
-                this.h[this.divs] = 0;
-                this.location = game.checkLocation(this.z[this.divs], this.x[this.divs]);
-                switch(this.location) {
-                    case GREEN:
-                    console.log("Landing zone for arc " + arc + ": Green")
-                    break;
-
-                    case FAIRWAY:
-                    console.log("Landing zone for arc " + arc + ": Fairway");
-                    break;
-
-                    case ROUGH:
-                    console.log("Landing zone for arc " + arc + ": Rough");
-                    break;
-                }
-                let range = Math.sqrt(Math.pow(this.x[this.divs] - this.x[0], 2) + Math.pow(this.z[this.divs] - this.z[0], 2));
-                console.log("Range after arc " + arc + ": " + range + " m");
-                arc++;
-                maxed = false;
-                if(v > 1) {
-                    let rest = (v <= 20) ? (0.510 - 0.0375*v + 0.000903*Math.pow(v, 2)) : 0.12;
-                    let theta1 = Math.atan(-vLat/vY);
-                    let thetac = 15.4*v*theta1/(18.6*44.4);
-                    vLat = 5/7*v*Math.sin(theta1 - thetac) - 2*this.realRadius*omega/7;
-                    vY = rest * v * Math.cos(theta1 - thetac);
-                    omega = vLat / this.realRadius;
-                } else {
-                    break;
-                }
-            }
-            // Increase iterative variable
-            this.divs++;
-        }
+        this.arc = 1;
+        this.maxed = false;
         this.time = 0;
+        this.moving = true;
     },
     update(dt) {
         if(!this.moving) {
-            // If we're not moving yet
-            if(this.time === 0) {
-                // If the launch function has finished
-                // Start moving next update
-                this.moving = true;
-            }
-            // End
+            // If we're not moving yet, end
             return 0;
         }
-
         this.time += dt;
-        // Find our closest pre-calculated position by reducing it to one of the array indices
-        let index = Math.floor(this.time / this.dt);
-        if(index > this.divs) {
-            // If we're at the end of the shot
-            // Put us on the ground on the last frame
-            index = this.divs;
-            this.moving = false;
-            this.pos.x = this.x[index];
-            this.pos.z = this.z[index];
-            this.pos.y = this.h[index];
-            delete this.x;
-            delete this.z;
-            delete this.h;
-            this.stroke++;
-            return 0;
+        while(this.divs * this.dt < this.time) { // If we need to update
+            // Increase iterative variable
+            this.divs++;
+            // Net velocity magnitude
+            let v = Math.sqrt(Math.pow(this.vY, 2) + Math.pow(this.vLat, 2));
+            // Accelerations
+            let aY = this.q * v * (this.CL * this.vLat - this.CD * this.vY) - this.g;
+            let aLat = this.q * v * (-this.CL * this.vY - this.CD * this.vLat);
+            // Update spin
+            this.omega *= this.decay;
+            // Euler's method
+            this.vY += aY * this.dt;
+            this.vLat += aLat * this.dt;
+            this.pos.y += this.vY * this.dt;
+            this.pos.x += this.vLat * this.dt * this.cosLat;
+            this.pos.z += this.vLat * this.dt * this.sinLat;
+            if(!this.maxed && this.pos.y <= this.yLast) {
+                this.maxed = true;
+                console.log("Max height for arc " + this.arc + ": " + this.yLast + " m");
+            }
+            this.yLast = this.pos.y;
+
+            if(game.tree_xSorted[this.xCurrent] !== undefined && this.xSign * this.pos.x >= this.xSign * (game.tree_xSorted[this.xCurrent][this.xIndex] - this.realRadius)) {
+                if(this.pos.y <= game.tree_xSorted[this.xCurrent][2] && this.pos.z >= game.tree_xSorted[this.xCurrent][3] && this.pos.z <= game.tree_xSorted[this.xCurrent][4]) {
+                    this.pos.x = game.tree_xSorted[this.xCurrent][this.xIndex] - this.realRadius * this.xSign;
+                    this.cosLat = -this.cosLat;
+                    this.xSign = -this.xSign;
+                    this.xIndex = 1 - this.xIndex;
+                }
+                this.xCurrent += this.xSign;
+            }
+
+            if(game.tree_zSorted[this.zCurrent] !== undefined && this.zSign * this.pos.z >= this.zSign * (game.tree_zSorted[this.zCurrent][this.zIndex] - this.realRadius)) {
+                if(this.pos.y <= game.tree_zSorted[this.zCurrent][2] && this.pos.x >= game.tree_zSorted[this.zCurrent][0] && this.pos.x <= game.tree_zSorted[this.zCurrent][1]) {
+                    this.pos.z = game.tree_zSorted[this.zCurrent][this.zIndex] - this.realRadius * this.zSign;
+                    this.sinLat = -this.sinLat;
+                    this.zSign = -this.zSign;
+                    this.zIndex = (1 - this.zSign) / 2 + 3;
+                }
+                this.zCurrent += this.zSign;
+            }
+            if(this.vY < 0 && this.pos.y <= 0) {
+                this.pos.y = 0;
+                this.location = game.checkLocation(this.pos.z, this.pos.x);
+                switch(this.location) {
+                    case GREEN:
+                    console.log("Landing zone for arc " + this.arc + ": Green")
+                    break;
+
+                    case FAIRWAY:
+                    console.log("Landing zone for arc " + this.arc + ": Fairway");
+                    break;
+
+                    case ROUGH:
+                    console.log("Landing zone for arc " + this.arc + ": Rough");
+                    break;
+                }
+                let range = Math.sqrt(Math.pow(this.pos.x - this.x0, 2) + Math.pow(this.pos.z - this.z0, 2));
+                console.log("Range after arc " + this.arc + ": " + range + " m");
+                this.arc++;
+                this.maxed = false;
+                if(v > 1) {
+                    let rest = (v <= 20) ? (0.510 - 0.0375*v + 0.000903*Math.pow(v, 2)) : 0.12;
+                    let theta1 = Math.atan(-this.vLat/this.vY);
+                    let thetac = 15.4*v*theta1/(18.6*44.4);
+                    this.vLat = 5/7*v*Math.sin(theta1 - thetac) - 2*this.realRadius*this.omega/7;
+                    this.vY = rest * v * Math.cos(theta1 - thetac);
+                    this.omega = this.vLat / this.realRadius;
+                } else {
+                    this.moving = false;
+                    break;
+                }
+            }
         }
-        this.pos.x = this.x[index];
-        this.pos.z = this.z[index];
-        this.pos.y = this.h[index];
     }
 }
 
