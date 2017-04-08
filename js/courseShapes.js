@@ -2,7 +2,7 @@ const GREEN = 2;
 const FAIRWAY = 1;
 const ROUGH = 0;
 const LEFTSHIFT = 138;
-const SCALEFACTOR = 0.715;
+const SCALEFACTOR = 0.9;
 
 game.greenShape = new SAT.Circle(new SAT.Vector((223.711-LEFTSHIFT)*SCALEFACTOR, 298.565*SCALEFACTOR), 88.094/2*SCALEFACTOR);
 
@@ -91,7 +91,7 @@ new SAT.Polygon(new SAT.Vector(), [
     new SAT.Vector((131.522-LEFTSHIFT)*SCALEFACTOR,239.179*SCALEFACTOR),
     new SAT.Vector((137.969-LEFTSHIFT)*SCALEFACTOR,206.746*SCALEFACTOR)
 ]),
-(new SAT.Box(new SAT.Vector(-59.75, -51.5), 1.5, 3)).toPolygon()];
+(new SAT.Box(new SAT.Vector(-72.75, -51.5), 1.5, 3)).toPolygon()];
 
 game.checkLocation = function(z, x) {
     let posVec = new SAT.Vector(z, x);

@@ -8,7 +8,7 @@ game.ball = {
 
         this.angleLat = angleLat;
         // Array length, makes life/processing easier
-        this.divs = 0;
+        this.frameTime = 0;
         this.yLast = this.pos.y - 1;
         // Lateral velocity
         this.vLat = v0lat;
@@ -45,14 +45,14 @@ game.ball = {
         this.moving = true;
     },
     update(dt) {
-        if(!this.moving) {
-            // If we're not moving yet, end
+        if(!this.moving || this.won) {
+            // If we're not moving yet or we already won, end
             return 0;
         }
         this.time += dt;
-        while(this.divs * this.dt < this.time) { // If we need to update
+        while(this.frameTime < this.time) { // If we need to update
             // Increase iterative variable
-            this.divs++;
+            this.frameTime += this.dt
             if(this.rolling) {
                 let a = -5/7*G*PG;
                 this.vLat += a * this.dt;
@@ -61,10 +61,16 @@ game.ball = {
                     this.rolling = false;
                     let range = Math.sqrt(Math.pow(this.pos.x - this.x0, 2) + Math.pow(this.pos.z - this.z0, 2));
                     console.log("Range after rolling: " + range + " m");
+                    this.stroke++;
                     break;
                 }
                 this.pos.x += this.vLat * this.dt * this.cosLat;
                 this.pos.z += this.vLat * this.dt * this.sinLat;
+                if(Math.sqrt(Math.pow(this.pos.x - game.flagX, 2) + Math.pow(this.pos.z - game.flagZ, 2)) < 0.053975) {
+                    this.won = true;
+                    alert("You won!");
+                    break;
+                }
             } else {
                 // Net velocity magnitude
                 var v = Math.sqrt(Math.pow(this.vY, 2) + Math.pow(this.vLat, 2));
@@ -133,11 +139,8 @@ game.ball = {
                     this.vY = rest * v * Math.cos(theta1 - thetac);
                     this.omega = this.vLat / this.realRadius;
                 } else {
-                    this.time = 0;
-                    this.divs = 0;
                     this./*rick*/rolling = true;
                     this.vY = undefined;
-                    break;
                 }
             }
         }
@@ -153,7 +156,7 @@ const PG = 1.31;
 // Whether or not the ball is mid-launch
 game.ball.moving = false;
 // Initial position
-game.ball.pos = {x: -50, z: -59, y: 0};
+game.ball.pos = {x: -50, z: -72, y: 0};
 let p = 1.225;
 let m = 0.04593;
 // q value

@@ -14,7 +14,7 @@ const stats = [
     [51.4, 0.3159, 133.3], // 8 Iron
     [48.7, 0.3560, 144.1], // 9 Iron
     [45.6, 0.4224, 155.1], // PW
-    [10.0, 0, undefined] // Putter
+    [15.0, 0, undefined] // Putter
 ]
 
 let game = {
@@ -94,9 +94,9 @@ let game = {
         this.rightWidth = this.width - this.leftWidth;
         this.height = window.innerHeight - 110;
         // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.7;
+        this.ballinitpos = this.height * 0.8;
         // Like this.scale but for the right canvas
-        this.rightScale = this.height / 400;
+        this.rightScale = this.height / 450;
         // Set canvases to fill page
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
@@ -120,7 +120,7 @@ let game = {
         this.bgCx.fillRect(0, groundHeight, this.leftWidth, this.height - groundHeight);
         this.bgCx.drawImage(this.fairwayImage, this.leftWidth + this.rightWidth/2 - LEFTSHIFT*SCALEFACTOR*this.rightScale,
             this.ballinitpos - 350*SCALEFACTOR*this.rightScale, 275.463*SCALEFACTOR*this.rightScale, 350*SCALEFACTOR*this.rightScale);
-        this.bgCx.fillRect(this.leftWidth + this.rightWidth/2 - 59.75*this.rightScale, this.ballinitpos + 48.5*this.rightScale, 1.5*this.rightScale, 3*this.rightScale);
+        this.bgCx.fillRect(this.leftWidth + this.rightWidth/2 - 72.75*this.rightScale, this.ballinitpos + 48.5*this.rightScale, 1.5*this.rightScale, 3*this.rightScale);
         // Draw line in corner
         this.bgCx.lineWidth = 1;
         this.bgCx.beginPath();
@@ -173,7 +173,7 @@ let game = {
             this.up = 1;
             // Same as angle stuff
             this.power = 1;
-            this.launchAngleSet = (this.clubNames[clubNum] === "Putter");
+            this.launchAngleSet = (this.clubNames[this.clubNum] === "Putter");
         }
     },
     onKeyUp: function(keyCode) {
@@ -201,11 +201,9 @@ let game = {
         // this.scale is set in the update loop - setting it to Infinity ensures that it is set properly the first time through the update loop.
         // It describes the zoom level in pixels per meter
         this.scale = Infinity;
-        // Find random position for the flag up to 155 meters away from the stick man
-        // Adding 5 to the x coordinate ensures that the flag is at least 5 meters from the stick man
         // this.flagX and this.flagZ are set in meters
-        this.flagX = Math.floor(Math.random() * 150) + 5;
-        this.flagZ = Math.floor(Math.random() * -this.rightWidth + this.rightWidth / 2) / this.rightScale;
+        this.flagX = 280;
+        this.flagZ = 80;
 
         this.tree_xSorted = [];
         this.tree_zSorted = [];
