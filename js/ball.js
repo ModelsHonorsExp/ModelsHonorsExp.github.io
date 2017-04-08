@@ -68,7 +68,10 @@ game.ball = {
                 this.pos.z += this.vLat * this.dt * this.sinLat;
                 if(Math.sqrt(Math.pow(this.pos.x - game.flagX, 2) + Math.pow(this.pos.z - game.flagZ, 2)) < 0.053975) {
                     this.won = true;
-                    alert("You won!");
+                    game.poof()
+                    setInterval(function() {
+                        game.poof();
+                    }, 1000);
                     break;
                 }
             } else {
