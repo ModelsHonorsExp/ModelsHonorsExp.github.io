@@ -13,7 +13,8 @@ const stats = [
     [53.6, 0.2845, 118.3], // 7 Iron
     [51.4, 0.3159, 133.3], // 8 Iron
     [48.7, 0.3560, 144.1], // 9 Iron
-    [45.6, 0.4224, 155.1] // PW
+    [45.6, 0.4224, 155.1], // PW
+    [10.0, 0, undefined] // Putter
 ]
 
 let game = {
@@ -69,8 +70,8 @@ let game = {
                 self.enable();
             }
         }, 0);
-        this.clubNames = ["Driver", "3-wood", "5-wood", "3 Iron", "4 Iron", "5 Iron",
-                          "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW"];
+        this.clubNames = ["Driver", "3-wood", "5-wood", "3 Iron", "4 Iron", "5 Iron", "Hybrid",
+                          "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "Putter"];
         let dropdownBox = document.querySelector(".dropdown-content");
 
         // Generate buttons
@@ -119,6 +120,7 @@ let game = {
         this.bgCx.fillRect(0, groundHeight, this.leftWidth, this.height - groundHeight);
         this.bgCx.drawImage(this.fairwayImage, this.leftWidth + this.rightWidth/2 - LEFTSHIFT*SCALEFACTOR*this.rightScale,
             this.ballinitpos - 350*SCALEFACTOR*this.rightScale, 275.463*SCALEFACTOR*this.rightScale, 350*SCALEFACTOR*this.rightScale);
+        this.bgCx.fillRect(this.leftWidth + this.rightWidth/2 - 59.75*this.rightScale, this.ballinitpos + 48.5*this.rightScale, 1.5*this.rightScale, 3*this.rightScale);
         // Draw line in corner
         this.bgCx.lineWidth = 1;
         this.bgCx.beginPath();
@@ -171,7 +173,7 @@ let game = {
             this.up = 1;
             // Same as angle stuff
             this.power = 1;
-            this.launchAngleSet = false;
+            this.launchAngleSet = (this.clubNames[clubNum] === "Putter");
         }
     },
     onKeyUp: function(keyCode) {
@@ -274,6 +276,9 @@ let game = {
         this.render(dt);
     },
     setClub: function(clubNum) {
+        if(!this.launchAngleSet) {
+            this.launchAngleSet = (this.clubNames[clubNum] === "Putter");
+        }
         this.clubNum = clubNum;
         this.dropdownButton.innerHTML = this.clubNames[clubNum];
     }
