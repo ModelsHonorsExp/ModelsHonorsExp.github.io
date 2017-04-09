@@ -134,8 +134,8 @@ game.ball = {
                 console.log("Range after arc " + this.arc + ": " + range + " m");
                 this.arc++;
                 this.maxed = false;
-                if(v > 1 && this.vY !== 0) {
-                    let rest = (v <= 20) ? (0.510 - 0.0375*v + 0.000903*Math.pow(v, 2)) : 0.12;
+                if(this.vY > 1) {
+                    let rest = (this.vY <= 20) ? (0.510 - 0.0375*this.vY + 0.000903*Math.pow(this.vY, 2)) : 0.12;
                     let theta1 = Math.atan(-this.vLat/this.vY);
                     let thetac = 15.4*v*theta1/(18.6*44.4);
                     this.vLat = 5/7*v*Math.sin(theta1 - thetac) - 2*this.realRadius*this.omega/7;
