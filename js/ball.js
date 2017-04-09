@@ -66,7 +66,7 @@ game.ball = {
                 }
                 this.pos.x += this.vLat * this.dt * this.cosLat;
                 this.pos.z += this.vLat * this.dt * this.sinLat;
-                if(Math.sqrt(Math.pow(this.pos.x - game.flagX, 2) + Math.pow(this.pos.z - game.flagZ, 2)) < 0.053975) {
+                if(Math.sqrt(Math.pow(this.pos.x - game.flagX, 2) + Math.pow(this.pos.z - game.flagZ, 2)) < 0.25) { // real-life radius: 0.053975 m
                     this.won = true;
                     game.poof()
                     setInterval(function() {

@@ -56,7 +56,7 @@ game.render = function(dt) {
         this.rightCx.stroke();
     }
     this.rightCx.beginPath();
-    this.rightCx.arc(this.rightWidth/2 + this.flagZ*this.rightScale, this.ballinitpos - this.flagX*this.rightScale, 1, 0, Math.PI*2);
+    this.rightCx.arc(this.rightWidth/2 + this.flagZ*this.rightScale, this.ballinitpos - this.flagX*this.rightScale, 3, 0, Math.PI*2);
     this.rightCx.fill();
     // Draw the ball
     this.leftCx.drawImage(this.ballImage, -realLeftEdge + this.ball.pos.x*this.scale - leftDiameter/2, groundHeight - this.ball.pos.y*this.scale - leftDiameter, leftDiameter, leftDiameter);
