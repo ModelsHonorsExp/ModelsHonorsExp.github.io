@@ -93,10 +93,14 @@ let game = {
         this.leftWidth = this.width * 3 / 5;
         this.rightWidth = this.width - this.leftWidth;
         this.height = window.innerHeight - 110;
-        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
-        this.ballinitpos = this.height * 0.8;
         // Like this.scale but for the right canvas
-        this.rightScale = this.height / 450;
+        this.rightScale = this.rightWidth / (300*SCALEFACTOR);
+        let heightRightScale = this.height / (420*SCALEFACTOR);
+        if(heightRightScale < this.rightScale) {
+            this.rightScale = heightRightScale;
+        }
+        // Set initial position of the ball in the right canvas - 5 meters from bottom of window
+        this.ballinitpos = this.height - this.rightScale * 60;
         // Set canvases to fill page
         this.bg.setAttribute("width", this.width);
         this.bg.setAttribute("height", this.height);
